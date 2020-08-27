@@ -83,7 +83,7 @@ function main() {
     </div>
     <div id="global-links">
     <ol>
-  <li>wip  <ol>    <li>      <a href="https://haxscramper.github.io/hcparse-doc/wip/raw_user.html">raw_user</a>    </li>    <li>      <a href="https://haxscramper.github.io/hcparse-doc/wip/header.html">header</a>    </li>    <li>      <a href="https://haxscramper.github.io/hcparse-doc/wip/result.html">result</a>    </li>  </ol></li>
+  <li>wip  <ol>    <li>      <a href="https://haxscramper.github.io/hcparse-doc/wip/raw_user.html">raw_user</a>    </li>    <li>      <a href="https://haxscramper.github.io/hcparse-doc/wip/header.html">header</a>    </li>  </ol></li>
   <li>src  <ol>    <li>      <a href="https://haxscramper.github.io/hcparse-doc/src/hcparse.html">hcparse</a>    </li>    <li>hcparse    <ol>      <li>        <a href="https://haxscramper.github.io/hcparse-doc/src/hcparse/libclang.html">libclang</a>      </li>      <li>libclang_raw      <ol>        <li>          <a href="https://haxscramper.github.io/hcparse-doc/src/hcparse/libclang_raw/cxerror_code.html">cxerror_code</a>        </li>        <li>          <a href="https://haxscramper.github.io/hcparse-doc/src/hcparse/libclang_raw/cxcompilation_database.html">cxcompilation_database</a>        </li>        <li>          <a href="https://haxscramper.github.io/hcparse-doc/src/hcparse/libclang_raw/cxstring.html">cxstring</a>        </li>        <li>          <a href="https://haxscramper.github.io/hcparse-doc/src/hcparse/libclang_raw/raw_user.html">raw_user</a>        </li>        <li>          <a href="https://haxscramper.github.io/hcparse-doc/src/hcparse/libclang_raw/build_system.html">build_system</a>        </li>        <li>          <a href="https://haxscramper.github.io/hcparse-doc/src/hcparse/libclang_raw/platform.html">platform</a>        </li>        <li>          <a href="https://haxscramper.github.io/hcparse-doc/src/hcparse/libclang_raw/index.html">index</a>        </li>        <li>          <a href="https://haxscramper.github.io/hcparse-doc/src/hcparse/libclang_raw/externc.html">externc</a>        </li>        <li>          <a href="https://haxscramper.github.io/hcparse-doc/src/hcparse/libclang_raw/fatal_error_handler.html">fatal_error_handler</a>        </li>        <li>          <a href="https://haxscramper.github.io/hcparse-doc/src/hcparse/libclang_raw/documentation.html">documentation</a>        </li>        <li>          <a href="https://haxscramper.github.io/hcparse-doc/src/hcparse/libclang_raw/opaque_impls.html">opaque_impls</a>        </li>      </ol></li>    </ol></li>  </ol></li>
   <li>
     <a href="https://haxscramper.github.io/hcparse-doc/index.html">index</a>
@@ -197,14 +197,12 @@ function main() {
     title="toPIdentDefs(cursor: CXCursor): PIdentDefs"><wbr />to<wbr />PIdent<wbr />Defs<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#isAliasTypedef%2CCXCursor"
     title="isAliasTypedef(cursor: CXCursor): bool"><wbr />is<wbr />Alias<wbr />Typedef<span class="attachedType"></span></a></li>
-  <li><a class="reference" href="#visitAliasTypedef%2CCXCursor%2CRewriteContext"
-    title="visitAliasTypedef(cursor: CXCursor; context: var RewriteContext)"><wbr />visit<wbr />Alias<wbr />Typedef<span class="attachedType"></span></a></li>
-  <li><a class="reference" href="#toEnumValue%2CCXCursor%2CCXTranslationUnit"
-    title="toEnumValue(cursor: CXCursor; tu: CXTranslationUnit): Option[PNode]"><wbr />to<wbr />Enum<wbr />Value<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#visitEnumDecl%2CCXCursor%2CRewriteContext"
     title="visitEnumDecl(cursor: CXCursor; context: var RewriteContext)"><wbr />visit<wbr />Enum<wbr />Decl<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#visitStructDecl%2CCXCursor%2CRewriteContext"
     title="visitStructDecl(cursor: CXCursor; context: var RewriteContext)"><wbr />visit<wbr />Struct<wbr />Decl<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#visitTypedef%2CCXCursor%2CRewriteContext"
+    title="visitTypedef(cursor: CXCursor; context: var RewriteContext)"><wbr />visit<wbr />Typedef<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#parseTranslationUnit%2CCXIndex%2Cstring%2Cseq%5Bstring%5D%2Cset%5BCXTranslationUnit_Flags%5D"
     title="parseTranslationUnit(trIndex: CXIndex; filename: string;
                      cmdline: seq[string] = @[]; trOptions: set[
@@ -358,7 +356,7 @@ function main() {
 
 </dd>
 <a id="isFromMainFile,CXCursor"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#isFromMainFile%2CCXCursor"><span class="Identifier">isFromMainFile</span></a><span class="Other">(</span><span class="Identifier">cursor</span><span class="Other">:</span> <a href="index.html#CXCursor"><span class="Identifier">CXCursor</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <a href="#isFromMainFile%2CCXCursor"><span class="Identifier">isFromMainFile</span></a><span class="Other">(</span><span class="Identifier">cursor</span><span class="Other">:</span> <a href="index.html#CXCursor"><span class="Identifier">CXCursor</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 
@@ -590,25 +588,10 @@ function main() {
 
 
 </dd>
-<a id="visitAliasTypedef,CXCursor,RewriteContext"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#visitAliasTypedef%2CCXCursor%2CRewriteContext"><span class="Identifier">visitAliasTypedef</span></a><span class="Other">(</span><span class="Identifier">cursor</span><span class="Other">:</span> <a href="index.html#CXCursor"><span class="Identifier">CXCursor</span></a><span class="Other">;</span> <span class="Identifier">context</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">RewriteContext</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">UnpackError</span><span class="Other">,</span> <span class="Identifier">AssertionError</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-
-
-
-</dd>
-<a id="toEnumValue,CXCursor,CXTranslationUnit"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#toEnumValue%2CCXCursor%2CCXTranslationUnit"><span class="Identifier">toEnumValue</span></a><span class="Other">(</span><span class="Identifier">cursor</span><span class="Other">:</span> <a href="index.html#CXCursor"><span class="Identifier">CXCursor</span></a><span class="Other">;</span> <span class="Identifier">tu</span><span class="Other">:</span> <a href="index.html#CXTranslationUnit"><span class="Identifier">CXTranslationUnit</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Option</span><span class="Other">[</span><span class="Identifier">PNode</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">AssertionError</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">,</span> <span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-
-
-
-</dd>
 <a id="visitEnumDecl,CXCursor,RewriteContext"></a>
 <dt><pre><span class="Keyword">proc</span> <a href="#visitEnumDecl%2CCXCursor%2CRewriteContext"><span class="Identifier">visitEnumDecl</span></a><span class="Other">(</span><span class="Identifier">cursor</span><span class="Other">:</span> <a href="index.html#CXCursor"><span class="Identifier">CXCursor</span></a><span class="Other">;</span> <span class="Identifier">context</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">RewriteContext</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">AssertionError</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">,</span> <span class="Identifier">UnpackError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">AssertionError</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">,</span> <span class="Identifier">KeyError</span><span class="Other">,</span> <span class="Identifier">UnpackError</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 
@@ -617,6 +600,14 @@ function main() {
 <a id="visitStructDecl,CXCursor,RewriteContext"></a>
 <dt><pre><span class="Keyword">proc</span> <a href="#visitStructDecl%2CCXCursor%2CRewriteContext"><span class="Identifier">visitStructDecl</span></a><span class="Other">(</span><span class="Identifier">cursor</span><span class="Other">:</span> <a href="index.html#CXCursor"><span class="Identifier">CXCursor</span></a><span class="Other">;</span> <span class="Identifier">context</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">RewriteContext</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
     <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">AssertionError</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">,</span> <span class="Identifier">UnpackError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+
+
+</dd>
+<a id="visitTypedef,CXCursor,RewriteContext"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#visitTypedef%2CCXCursor%2CRewriteContext"><span class="Identifier">visitTypedef</span></a><span class="Other">(</span><span class="Identifier">cursor</span><span class="Other">:</span> <a href="index.html#CXCursor"><span class="Identifier">CXCursor</span></a><span class="Other">;</span> <span class="Identifier">context</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">RewriteContext</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">AssertionError</span><span class="Other">,</span> <span class="Identifier">UnpackError</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 
@@ -706,7 +697,7 @@ function main() {
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2020-08-27 13:42:30 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2020-08-27 19:16:22 UTC</small>
       </div>
     </div>
   </div>
