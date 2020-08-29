@@ -47,12 +47,21 @@ function main() {
 
   toggleSwitch.addEventListener('change', switchTheme, false);
 
-  const currentTheme = localStorage.getItem('theme') ? localStorage.getItem('theme') : null;
-  if (currentTheme) {
-    document.documentElement.setAttribute('data-theme', currentTheme);
 
-    if (currentTheme === 'dark') {
-      toggleSwitch.checked = true;
+  if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    document.documentElement.setAttribute('data-theme', "dark");
+    toggleSwitch.checked = true;
+  } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+    document.documentElement.setAttribute('data-theme', "light");
+    toggleSwitch.checked = false;
+  } else {
+    const currentTheme = localStorage.getItem('theme') ? localStorage.getItem('theme') : null;
+    if (currentTheme) {
+      document.documentElement.setAttribute('data-theme', currentTheme);
+
+      if (currentTheme === 'dark') {
+        toggleSwitch.checked = true;
+      }
     }
   }
 }
@@ -74,7 +83,13 @@ function main() {
     </div>
     <div id="global-links">
     <ol>
-  <li>wip  <ol>    <li>      <a href="https://haxscramper.github.io/hcparse-doc/wip/raw_user.html">raw_user</a>    </li>    <li>      <a href="https://haxscramper.github.io/hcparse-doc/wip/header.html">header</a>    </li>  </ol></li>
+  <li>
+    <a href="https://haxscramper.github.io/hcparse-doc/wrap-examples.html">wrap-examples</a>
+  </li>
+  <li>wip  <ol>    <li>      <a href="https://haxscramper.github.io/hcparse-doc/wip/raw_user.html">raw_user</a>    </li>    <li>      <a href="https://haxscramper.github.io/hcparse-doc/wip/header.html">header</a>    </li>    <li>      <a href="https://haxscramper.github.io/hcparse-doc/wip/libclang_2.html">libclang_2</a>    </li>  </ol></li>
+  <li>
+    <a href="https://haxscramper.github.io/hcparse-doc/wrapgen_test.html">wrapgen_test</a>
+  </li>
   <li>src  <ol>    <li>      <a href="https://haxscramper.github.io/hcparse-doc/src/hcparse.html">hcparse</a>    </li>    <li>hcparse    <ol>      <li>        <a href="https://haxscramper.github.io/hcparse-doc/src/hcparse/libclang.html">libclang</a>      </li>      <li>libclang_raw      <ol>        <li>          <a href="https://haxscramper.github.io/hcparse-doc/src/hcparse/libclang_raw/cxerror_code.html">cxerror_code</a>        </li>        <li>          <a href="https://haxscramper.github.io/hcparse-doc/src/hcparse/libclang_raw/cxcompilation_database.html">cxcompilation_database</a>        </li>        <li>          <a href="https://haxscramper.github.io/hcparse-doc/src/hcparse/libclang_raw/cxstring.html">cxstring</a>        </li>        <li>          <a href="https://haxscramper.github.io/hcparse-doc/src/hcparse/libclang_raw/raw_user.html">raw_user</a>        </li>        <li>          <a href="https://haxscramper.github.io/hcparse-doc/src/hcparse/libclang_raw/build_system.html">build_system</a>        </li>        <li>          <a href="https://haxscramper.github.io/hcparse-doc/src/hcparse/libclang_raw/platform.html">platform</a>        </li>        <li>          <a href="https://haxscramper.github.io/hcparse-doc/src/hcparse/libclang_raw/index.html">index</a>        </li>        <li>          <a href="https://haxscramper.github.io/hcparse-doc/src/hcparse/libclang_raw/externc.html">externc</a>        </li>        <li>          <a href="https://haxscramper.github.io/hcparse-doc/src/hcparse/libclang_raw/fatal_error_handler.html">fatal_error_handler</a>        </li>        <li>          <a href="https://haxscramper.github.io/hcparse-doc/src/hcparse/libclang_raw/documentation.html">documentation</a>        </li>        <li>          <a href="https://haxscramper.github.io/hcparse-doc/src/hcparse/libclang_raw/opaque_impls.html">opaque_impls</a>        </li>      </ol></li>      <li>        <a href="https://haxscramper.github.io/hcparse-doc/src/hcparse/libclang_utils.html">libclang_utils</a>      </li>    </ol></li>  </ol></li>
   <li>
     <a href="https://haxscramper.github.io/hcparse-doc/index.html">index</a>
@@ -543,7 +558,7 @@ function main() {
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2020-08-29 09:23:55 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2020-08-29 19:03:32 UTC</small>
       </div>
     </div>
   </div>
