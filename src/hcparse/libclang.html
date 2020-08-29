@@ -47,21 +47,12 @@ function main() {
 
   toggleSwitch.addEventListener('change', switchTheme, false);
 
+  const currentTheme = localStorage.getItem('theme') ? localStorage.getItem('theme') : null;
+  if (currentTheme) {
+    document.documentElement.setAttribute('data-theme', currentTheme);
 
-  if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-    document.documentElement.setAttribute('data-theme', "dark");
-    toggleSwitch.checked = true;
-  } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
-    document.documentElement.setAttribute('data-theme', "light");
-    toggleSwitch.checked = false;
-  } else {
-    const currentTheme = localStorage.getItem('theme') ? localStorage.getItem('theme') : null;
-    if (currentTheme) {
-      document.documentElement.setAttribute('data-theme', currentTheme);
-
-      if (currentTheme === 'dark') {
-        toggleSwitch.checked = true;
-      }
+    if (currentTheme === 'dark') {
+      toggleSwitch.checked = true;
     }
   }
 }
@@ -98,7 +89,8 @@ function main() {
       </select>
     </div>
     <ul class="simple simple-toc" id="toc-list">
-<li>
+<ul class="simple"><li><a class="reference" id="parameters_toc" href="#parameters">Parameters</a></li>
+</ul><li>
   <a class="reference reference-toplevel" href="#7" id="57">Types</a>
   <ul class="simple simple-toc-section">
       <li><a class="reference" href="#CXVirtualFileOverlayImpl"
@@ -153,12 +145,7 @@ function main() {
   length*: culong"><wbr />CXUnsaved<wbr />File<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#CXAvailabilityKind"
     title="CXAvailabilityKind = enum
-  akAvailable,                ## The entity is available.
-  akDeprecated, ## The entity is available, but has been deprecated (and its use is
-               ## not recommended).
-  akNotAvailable,             ## The entity is not available; any use of it will be an error.
-  akNotAccessible ## The entity is available, but not accessible; any use of it will be
-                 ## an error."><wbr />CXAvailability<wbr />Kind<span class="attachedType"></span></a></li>
+  akAvailable, akDeprecated, akNotAvailable, akNotAccessible"><wbr />CXAvailability<wbr />Kind<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#CXVersion"
     title="CXVersion {.pure, bycopy.} = object
   major*: int
@@ -166,16 +153,9 @@ function main() {
   subminor*: int"><wbr />CXVersion<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#CXCursor_ExceptionSpecificationKind"
     title="CXCursor_ExceptionSpecificationKind = enum
-  ceskNone,                   ## The cursor has no exception specification.
-  ceskDynamicNone,            ## The cursor has exception specification throw()
-  ceskDynamic,                ## The cursor has exception specification throw(T1, T2)
-  ceskMSAny,                  ## The cursor has exception specification throw(...).
-  ceskBasicNoexcept,          ## The cursor has exception specification basic noexcept.
-  ceskComputedNoexcept,       ## The cursor has exception specification computed noexcept.
-  ceskUnevaluated,            ## The exception specification has not yet been evaluated.
-  ceskUninstantiated,         ## The exception specification has not yet been instantiated.
-  ceskUnparsed,               ## The exception specification has not been parsed yet.
-  ceskNoThrow                 ## The cursor has a __declspec(nothrow) exception specification."><wbr />CXCursor_<wbr />Exception<wbr />Specification<wbr />Kind<span class="attachedType"></span></a></li>
+  ceskNone, ceskDynamicNone, ceskDynamic, ceskMSAny, ceskBasicNoexcept,
+  ceskComputedNoexcept, ceskUnevaluated, ceskUninstantiated, ceskUnparsed,
+  ceskNoThrow"><wbr />CXCursor_<wbr />Exception<wbr />Specification<wbr />Kind<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#CXGlobalOptFlags"
     title="CXGlobalOptFlags = enum
   gofNone = 0,                  ## Used to indicate that no special CXIndex options are needed.
@@ -698,21 +678,10 @@ function main() {
   data*: array[3, pointer]"><wbr />CXCursor<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#CXLinkageKind"
     title="CXLinkageKind = enum
-  lkInvalid, ## This value indicates that no linkage information is available
-            ## for a provided CXCursor. 
-  lkNoLinkage, ## This is the linkage for variables, parameters, and so on that
-              ##  have automatic storage.  This covers normal (non-extern) local variables.
-  lkInternal,                 ## This is the linkage for static variables and static functions. 
-  lkUniqueExternal, ## This is the linkage for entities with external linkage that live
-                   ## in C++ anonymous namespaces.
-  lkExternal                  ## This is the linkage for entities with true, external linkage."><wbr />CXLinkage<wbr />Kind<span class="attachedType"></span></a></li>
+  lkInvalid, lkNoLinkage, lkInternal, lkUniqueExternal, lkExternal"><wbr />CXLinkage<wbr />Kind<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#CXVisibilityKind"
     title="CXVisibilityKind = enum
-  vkInvalid, ## This value indicates that no visibility information is available
-            ## for a provided CXCursor. 
-  vkHidden,                   ## Symbol not seen by the linker. 
-  vkProtected,                ## Symbol seen by the linker but resolves to a symbol inside this object. 
-  vkDefault                   ## Symbol seen by the linker and acts like a normal symbol."><wbr />CXVisibility<wbr />Kind<span class="attachedType"></span></a></li>
+  vkInvalid, vkHidden, vkProtected, vkDefault"><wbr />CXVisibility<wbr />Kind<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#CXPlatformAvailability"
     title="CXPlatformAvailability {.pure, bycopy.} = object
   platform*: CXString
@@ -808,8 +777,7 @@ function main() {
   <li><a class="reference" href="#CXRefQualifierKind"
     title="CXRefQualifierKind = enum
   rqkNone = 0,                  ## No ref-qualifier was provided. 
-  rqkLValue,                  ## An lvalue ref-qualifier was provided (
-  rqkRValue                   ## An rvalue ref-qualifier was provided ("><wbr />CXRef<wbr />Qualifier<wbr />Kind<span class="attachedType"></span></a></li>
+  rqkLValue, rqkRValue"><wbr />CXRef<wbr />Qualifier<wbr />Kind<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#CX_CXXAccessSpecifier"
     title="CX_CXXAccessSpecifier = enum
   asInvalidAccessSpecifier, asPublic, asProtected, asPrivate"><wbr />CX_<wbr />CXXAccess<wbr />Specifier<span class="attachedType"></span></a></li>
@@ -819,11 +787,7 @@ function main() {
   scC_OpenCLWorkGroupLocal, scC_Auto, scC_Register"><wbr />CX_<wbr />Storage<wbr />Class<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#CXChildVisitResult"
     title="CXChildVisitResult = enum
-  cvrBreak,                   ## Terminates the cursor traversal.
-  cvrContinue, ## Continues the cursor traversal with the next sibling of
-              ## the cursor just visited, without visiting its children.
-  cvrRecurse ## Recursively traverse the children of this cursor, using
-            ## the same visitor and client data."><wbr />CXChild<wbr />Visit<wbr />Result<span class="attachedType"></span></a></li>
+  cvrBreak, cvrContinue, cvrRecurse"><wbr />CXChild<wbr />Visit<wbr />Result<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#CXCursorVisitor"
     title="CXCursorVisitor = distinct proc (a0: CXCursor; a1: CXCursor; a2: pointer): CXChildVisitResult {.
     cdecl.}"><wbr />CXCursor<wbr />Visitor<span class="attachedType"></span></a></li>
@@ -868,11 +832,7 @@ function main() {
                            ## Error: cannot render: rnCodeBlock"><wbr />CXName<wbr />Ref<wbr />Flags<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#CXTokenKind"
     title="CXTokenKind = enum
-  tokPunctuation,             ## A token that contains some kind of punctuation.
-  tokKeyword,                 ## A language keyword.
-  tokIdentifier,              ## An identifier (that is not a keyword).
-  tokLiteral,                 ## A numeric, string, or character literal.
-  tokComment                  ## A comment."><wbr />CXToken<wbr />Kind<span class="attachedType"></span></a></li>
+  tokPunctuation, tokKeyword, tokIdentifier, tokLiteral, tokComment"><wbr />CXToken<wbr />Kind<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#CXToken"
     title="CXToken {.pure, bycopy.} = object
   int_data*: array[4, cuint]
@@ -885,94 +845,10 @@ function main() {
   completionString*: CXCompletionString"><wbr />CXCompletion<wbr />Result<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#CXCompletionChunkKind"
     title="CXCompletionChunkKind = enum
-  cckOptional, ## A code-completion string that describes &quot;optional&quot; text that
-              ## could be a part of the template (but is not required).
-              ## The Optional chunk is the only kind of chunk that has a code-completion
-              ## string for its representation, which is accessible via
-              ## The code-completion string
-              ## describes an additional part of the template that is completely optional.
-              ## For example, optional chunks can be used to describe the placeholders for
-              ## arguments that match up with defaulted function parameters, e.g. given:
-              ## Error: cannot render: rnCodeBlock
-              ## The code-completion string for this function would contain:
-              ##   - a TypedText chunk for &quot;f&quot;.
-              ##   - a LeftParen chunk for &quot;(&quot;.
-              ##   - a Placeholder chunk for &quot;int x&quot;
-              ##   - an Optional chunk containing the remaining defaulted arguments, e.g.,
-              ##       - a Comma chunk for &quot;,&quot;
-              ##       - a Placeholder chunk for &quot;float y&quot;
-              ##       - an Optional chunk containing the last defaulted argument:
-              ##           - a Comma chunk for &quot;,&quot;
-              ##           - a Placeholder chunk for &quot;double z&quot;
-              ##   - a RightParen chunk for &quot;)&quot;
-              ## There are many ways to handle Optional chunks. Two simple approaches are:
-              ##   - Completely ignore optional chunks, in which case the template for the
-              ##     function &quot;f&quot; would only include the first parameter (&quot;int x&quot;).
-              ##   - Fully expand all optional chunks, in which case the template for the
-              ##     function &quot;f&quot; would have all of the parameters.
-  cckTypedText, ## Text that a user would be expected to type to get this
-               ## code-completion result.
-               ## There will be exactly one &quot;typed text&quot; chunk in a semantic string, which
-               ## will typically provide the spelling of a keyword or the name of a
-               ## declaration that could be used at the current code point. Clients are
-               ## expected to filter the code-completion results based on the text in this
-               ## chunk.
-  cckText, ## Text that should be inserted as part of a code-completion result.
-          ## A &quot;text&quot; chunk represents text that is part of the template to be
-          ## inserted into user code should this particular code-completion result
-          ## be selected.
-  cckPlaceholder, ## Placeholder text that should be replaced by the user.
-                 ## A &quot;placeholder&quot; chunk marks a place where the user should insert text
-                 ## into the code-completion template. For example, placeholders might mark
-                 ## the function parameters for a function declaration, to indicate that the
-                 ## user should provide arguments for each of those parameters. The actual
-                 ## text in a placeholder is a suggestion for the text to display before
-                 ## the user replaces the placeholder with real code.
-  cckInformative, ## Informative text that should be displayed but never inserted as
-                 ## part of the template.
-                 ## An &quot;informative&quot; chunk contains annotations that can be displayed to
-                 ## help the user decide whether a particular code-completion result is the
-                 ## right option, but which is not part of the actual template to be inserted
-                 ## by code completion.
-  cckCurrentParameter, ## Text that describes the current parameter when code-completion is
-                      ## referring to function call, message send, or template specialization.
-                      ## A &quot;current parameter&quot; chunk occurs when code-completion is providing
-                      ## information about a parameter corresponding to the argument at the
-                      ## code-completion point. For example, given a function
-                      ## Error: cannot render: rnCodeBlock
-                      ## and the source code 
-                      ## where the code-completion point is after the
-                      ## &quot;(&quot;, the code-completion string will contain a &quot;current parameter&quot; chunk
-                      ## for &quot;int x&quot;, indicating that the current argument will initialize that
-                      ## parameter. After typing further, to 
-                      ## (where the code-completion
-                      ## point is after the &quot;,&quot;), the code-completion string will contain a
-                      ## &quot;current parameter&quot; chunk to &quot;int y&quot;.
-  cckLeftParen, ## A left parenthesis (&apos;(&apos;), used to initiate a function call or
-               ## signal the beginning of a function parameter list.
-  cckRightParen, ## A right parenthesis (&apos;)&apos;), used to finish a function call or
-                ## signal the end of a function parameter list.
-  cckLeftBracket,             ## A left bracket (&apos;[&apos;).
-  cckRightBracket,            ## A right bracket (&apos;]&apos;).
-  cckLeftBrace,               ## A left brace (&apos;{&apos;).
-  cckRightBrace,              ## A right brace (&apos;}&apos;).
-  cckLeftAngle,               ## A left angle bracket (&apos;
-               ## &lt;
-               ## &apos;).
-  cckRightAngle,              ## A right angle bracket (&apos;&gt;&apos;).
-  cckComma,                   ## A comma separator (&apos;,&apos;).
-  cckResultType, ## Text that specifies the result type of a given result.
-                ## This special kind of informative chunk is not meant to be inserted into
-                ## the text buffer. Rather, it is meant to illustrate the type that an
-                ## expression using the given completion string would have.
-  cckColon,                   ## A colon (&apos;:&apos;).
-  cckSemiColon,               ## A semicolon (&apos;;&apos;).
-  cckEqual,                   ## An &apos;=&apos; sign.
-  cckHorizontalSpace,         ## Horizontal space (&apos; &apos;).
-  cckVerticalSpace            ## Vertical space (&apos;
-                  ## \\
-                  ## n&apos;), after which it is generally a good idea to
-                  ## perform indentation."><wbr />CXCompletion<wbr />Chunk<wbr />Kind<span class="attachedType"></span></a></li>
+  cckOptional, cckTypedText, cckText, cckPlaceholder, cckInformative,
+  cckCurrentParameter, cckLeftParen, cckRightParen, cckLeftBracket, cckRightBracket,
+  cckLeftBrace, cckRightBrace, cckLeftAngle, cckRightAngle, cckComma, cckResultType,
+  cckColon, cckSemiColon, cckEqual, cckHorizontalSpace, cckVerticalSpace"><wbr />CXCompletion<wbr />Chunk<wbr />Kind<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#CXCodeCompleteResults"
     title="CXCodeCompleteResults {.pure, bycopy.} = object
   results*: ptr [CXCompletionResult]
@@ -1033,7 +909,7 @@ function main() {
                        ## the results.
   cocNaturalLanguage = 2097152, ## Natural language completions should be included in the results.
   cocIncludedFile = 4194304,    ## #include file completions should be included in the results.
-  cocUnknown                  ## The current context is unknown, so set all contexts."><wbr />CXCompletion<wbr />Context<span class="attachedType"></span></a></li>
+  cocUnknown"><wbr />CXCompletion<wbr />Context<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#CXInclusionVisitor"
     title="CXInclusionVisitor = distinct proc (a0: pointer; a1: ptr [CXSourceLocation]; a2: cuint;
                                 a3: pointer): void {.cdecl.}"><wbr />CXInclusion<wbr />Visitor<span class="attachedType"></span></a></li>
@@ -1307,17 +1183,10 @@ function main() {
   cokFullComment = 12           ## A full comment attached to a declaration, contains block content."><wbr />CXComment<wbr />Kind<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#CXCommentInlineCommandRenderKind"
     title="CXCommentInlineCommandRenderKind = enum
-  cicrkNormal,                ## Command argument should be rendered in a normal font.
-  cicrkBold,                  ## Command argument should be rendered in a bold font.
-  cicrkMonospaced,            ## Command argument should be rendered in a monospaced font.
-  cicrkEmphasized, ## Command argument should be rendered emphasized (typically italic
-                  ## font).
-  cicrkAnchor                 ## Command argument should not be rendered (since it only defines an anchor)."><wbr />CXComment<wbr />Inline<wbr />Command<wbr />Render<wbr />Kind<span class="attachedType"></span></a></li>
+  cicrkNormal, cicrkBold, cicrkMonospaced, cicrkEmphasized, cicrkAnchor"><wbr />CXComment<wbr />Inline<wbr />Command<wbr />Render<wbr />Kind<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#CXCommentParamPassDirection"
     title="CXCommentParamPassDirection = enum
-  cppdIn,                     ## The parameter is an input parameter.
-  cppdOut,                    ## The parameter is an output parameter.
-  cppdInOut                   ## The parameter is an input and output parameter."><wbr />CXComment<wbr />Param<wbr />Pass<wbr />Direction<span class="attachedType"></span></a></li>
+  cppdIn, cppdOut, cppdInOut"><wbr />CXComment<wbr />Param<wbr />Pass<wbr />Direction<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#CDeclKind"
     title="CDeclKind = enum
   cdkClass, cdkStruct, cdkEnum, cdkFunction, cdkMethod, cdkField"><wbr />CDecl<wbr />Kind<span class="attachedType"></span></a></li>
@@ -2173,6 +2042,22 @@ function main() {
     title="fullComment_getAsHTML(comment: CXComment): CXString"><wbr />full<wbr />Comment_<wbr />get<wbr />As<wbr />HTML<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#fullComment_getAsXML%2CCXComment"
     title="fullComment_getAsXML(comment: CXComment): CXString"><wbr />full<wbr />Comment_<wbr />get<wbr />As<wbr />XML<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#%24%2CCXString"
+    title="`$`(cxstr: CXString): string"><wbr />`$`<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#%24%2CCXCursor"
+    title="`$`(cursor: CXCursor): string"><wbr />`$`<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#%24%2CCXType"
+    title="`$`(cxtype: CXType): string"><wbr />`$`<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#%24%2CCXCursorKind"
+    title="`$`(cxkind: CXCursorKind): string"><wbr />`$`<span class="attachedType">CXCursorKind</span></a></li>
+  <li><a class="reference" href="#%3Ddestroy%2CCXTranslationUnit"
+    title="`=destroy`(tu: var CXTranslationUnit): void"><wbr />`=destroy`<span class="attachedType">CXTranslationUnit</span></a></li>
+  <li><a class="reference" href="#%3Ddestroy%2CCXIndex"
+    title="`=destroy`(index: var CXIndex): void"><wbr />`=destroy`<span class="attachedType">CXIndex</span></a></li>
+  <li><a class="reference" href="#%3Ddestroy%2CCXCompilationDatabase"
+    title="`=destroy`(dbase: var CXCompilationDatabase): void"><wbr />`=destroy`<span class="attachedType">CXCompilationDatabase</span></a></li>
+  <li><a class="reference" href="#%3Ddispose%2CCXCompileCommands"
+    title="`=dispose`(commands: var CXCompileCommands): void"><wbr />`=dispose`<span class="attachedType">CXCompileCommands</span></a></li>
   <li><a class="reference" href="#getDiagnostics%2CCXTranslationUnit"
     title="getDiagnostics(unit: CXTranslationUnit): seq[CXDiagnostic]"><wbr />get<wbr />Diagnostics<span class="attachedType">CXTranslationUnit</span></a></li>
   <li><a class="reference" href="#%24%2CCXDiagnostic"
@@ -2183,30 +2068,25 @@ function main() {
     title="createDatabase(directory: string): CXCompilationDatabase"><wbr />create<wbr />Database<span class="attachedType">CXCompilationDatabase</span></a></li>
   <li><a class="reference" href="#getArgs%2CCXCompileCommand"
     title="getArgs(command: CXCompileCommand): seq[string]"><wbr />get<wbr />Args<span class="attachedType">CXCompileCommand</span></a></li>
-  <li><a class="reference" href="#parseTranslationUnit%2CCXIndex%2Cstring%2Cseq%5Bstring%5D%2Cset%5BCXTranslationUnit_Flags%5D"
-    title="parseTranslationUnit(trIndex: CXIndex; filename: string;
-                     cmdline: seq[string] = @[]; trOptions: set[
-    CXTranslationUnit_Flags] = {tufSingleFileParse}): CXTranslationUnit"><wbr />parse<wbr />Translation<wbr />Unit<span class="attachedType">CXIndex</span></a></li>
-  <li><a class="reference" href="#getBuiltinHeaders"
-    title="getBuiltinHeaders(): seq[string]"><wbr />get<wbr />Builtin<wbr />Headers<span class="attachedType"></span></a></li>
-  <li><a class="reference" href="#parseTranslationUnit%2CCXIndex%2CCXCompileCommand"
-    title="parseTranslationUnit(index: CXIndex; command: CXCompileCommand): CXTranslationUnit"><wbr />parse<wbr />Translation<wbr />Unit<span class="attachedType">CXIndex</span></a></li>
+  <li><a class="reference" href="#%5B%5D%2CCXCompileCommands%2Cint"
+    title="`[]`(commands: CXCompileCommands; idx: int): CXCompileCommand"><wbr />`[]`<span class="attachedType">CXCompileCommands</span></a></li>
   <li><a class="reference" href="#isNil%2CCXTranslationUnit"
     title="isNil(tu: CXTranslationUnit): bool"><wbr />is<wbr />Nil<span class="attachedType">CXTranslationUnit</span></a></li>
+  <li><a class="reference" href="#parseTranslationUnit%2CCXIndex%2Cstring%2Cseq%5Bstring%5D%2Cset%5BCXTranslationUnit_Flags%5D%2Cbool"
+    title="parseTranslationUnit(trIndex: CXIndex; filename: string;
+                     cmdline: seq[string] = @[]; trOptions: set[
+    CXTranslationUnit_Flags] = {tufSingleFileParse}; reparseOnNil: bool = true): CXTranslationUnit"><wbr />parse<wbr />Translation<wbr />Unit<span class="attachedType">CXIndex</span></a></li>
+  <li><a class="reference" href="#getBuiltinHeaders"
+    title="getBuiltinHeaders(): seq[string]"><wbr />get<wbr />Builtin<wbr />Headers<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#parseTranslationUnit%2CCXIndex%2CCXCompileCommand%2Cseq%5Bstring%5D"
+    title="parseTranslationUnit(index: CXIndex; command: CXCompileCommand;
+                     extraFlags: seq[string] = @[]): CXTranslationUnit"><wbr />parse<wbr />Translation<wbr />Unit<span class="attachedType">CXIndex</span></a></li>
   <li><a class="reference" href="#toClientData%2CT"
     title="toClientData[T](val: var T): CXClientData"><wbr />to<wbr />Client<wbr />Data<span class="attachedType">CXClientData</span></a></li>
   <li><a class="reference" href="#toCursorVisitor%2CCXVisitor"
     title="toCursorVisitor(impl: CXVisitor): CXCursorVisitor"><wbr />to<wbr />Cursor<wbr />Visitor<span class="attachedType">CXCursorVisitor</span></a></li>
   <li><a class="reference" href="#visitChildren%2CCXCursor%2Ctuple%5BT%2CCXVisitor%5D"
     title="visitChildren[T](cursor: CXCursor; callback: tuple[data: T, impl: CXVisitor])"><wbr />visit<wbr />Children<span class="attachedType"></span></a></li>
-  <li><a class="reference" href="#%24%2CCXString"
-    title="`$`(cxstr: CXString): string"><wbr />`$`<span class="attachedType"></span></a></li>
-  <li><a class="reference" href="#%24%2CCXCursor"
-    title="`$`(cursor: CXCursor): string"><wbr />`$`<span class="attachedType"></span></a></li>
-  <li><a class="reference" href="#%24%2CCXType"
-    title="`$`(cxtype: CXType): string"><wbr />`$`<span class="attachedType"></span></a></li>
-  <li><a class="reference" href="#%24%2CCXCursorKind"
-    title="`$`(cxkind: CXCursorKind): string"><wbr />`$`<span class="attachedType">CXCursorKind</span></a></li>
   <li><a class="reference" href="#%3D%3D%2CCXType%2CCXType"
     title="`==`(t1, t2: CXType): bool"><wbr />`==`<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#isConstQualified%2CCXType"
@@ -2217,6 +2097,8 @@ function main() {
     title="cxKind(cursor: CXCursor): CXCursorKind"><wbr />cx<wbr />Kind<span class="attachedType">CXCursorKind</span></a></li>
   <li><a class="reference" href="#expectKind%2CCXCursor%2CCXCursorKind"
     title="expectKind(cursor: CXCursor; kind: CXCursorKind)"><wbr />expect<wbr />Kind<span class="attachedType">CXCursorKind</span></a></li>
+  <li><a class="reference" href="#expectKind%2CCXCursor%2Cset%5BCXCursorKind%5D"
+    title="expectKind(cursor: CXCursor; kind: set[CXCursorKind])"><wbr />expect<wbr />Kind<span class="attachedType">CXCursorKind</span></a></li>
   <li><a class="reference" href="#cxType%2CCXCursor"
     title="cxType(cursor: CXCursor): CXType"><wbr />cx<wbr />Type<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#comment%2CCXCursor"
@@ -2296,7 +2178,9 @@ function main() {
 <li>
   <a class="reference reference-toplevel" href="#15" id="65">Iterators</a>
   <ul class="simple simple-toc-section">
-      <li><a class="reference" href="#items.i%2CCXCursor"
+      <li><a class="reference" href="#items.i%2CCXCompileCommands"
+    title="items(commands: CXCompileCommands): CXCompileCommand"><wbr />items<span class="attachedType">CXCompileCommands</span></a></li>
+  <li><a class="reference" href="#items.i%2CCXCursor"
     title="items(cursor: CXCursor): CXCursor"><wbr />items<span class="attachedType"></span></a></li>
 
   </ul>
@@ -2459,12 +2343,7 @@ Error codes for Compilation Database
 </dd>
 <a id="CXAvailabilityKind"></a>
 <dt><pre><a href="libclang.html#CXAvailabilityKind"><span class="Identifier">CXAvailabilityKind</span></a> <span class="Other">=</span> <span class="Keyword">enum</span>
-  <span class="Identifier">akAvailable</span><span class="Other">,</span>                <span class="Comment">## The entity is available.</span>
-  <span class="Identifier">akDeprecated</span><span class="Other">,</span> <span class="Comment">## The entity is available, but has been deprecated (and its use is</span>
-               <span class="Comment">## not recommended).</span>
-  <span class="Identifier">akNotAvailable</span><span class="Other">,</span>             <span class="Comment">## The entity is not available; any use of it will be an error.</span>
-  <span class="Identifier">akNotAccessible</span> <span class="Comment">## The entity is available, but not accessible; any use of it will be</span>
-                 <span class="Comment">## an error.</span></pre></dt>
+  <span class="Identifier">akAvailable</span><span class="Other">,</span> <span class="Identifier">akDeprecated</span><span class="Other">,</span> <span class="Identifier">akNotAvailable</span><span class="Other">,</span> <span class="Identifier">akNotAccessible</span></pre></dt>
 <dd>
 
 Describes the availability of a particular entity, which indicates whether the use of this entity will result in a warning or error due to it being deprecated or unavailable.
@@ -2483,16 +2362,9 @@ Describes the availability of a particular entity, which indicates whether the u
 </dd>
 <a id="CXCursor_ExceptionSpecificationKind"></a>
 <dt><pre><a href="libclang.html#CXCursor_ExceptionSpecificationKind"><span class="Identifier">CXCursor_ExceptionSpecificationKind</span></a> <span class="Other">=</span> <span class="Keyword">enum</span>
-  <span class="Identifier">ceskNone</span><span class="Other">,</span>                   <span class="Comment">## The cursor has no exception specification.</span>
-  <span class="Identifier">ceskDynamicNone</span><span class="Other">,</span>            <span class="Comment">## The cursor has exception specification throw()</span>
-  <span class="Identifier">ceskDynamic</span><span class="Other">,</span>                <span class="Comment">## The cursor has exception specification throw(T1, T2)</span>
-  <span class="Identifier">ceskMSAny</span><span class="Other">,</span>                  <span class="Comment">## The cursor has exception specification throw(...).</span>
-  <span class="Identifier">ceskBasicNoexcept</span><span class="Other">,</span>          <span class="Comment">## The cursor has exception specification basic noexcept.</span>
-  <span class="Identifier">ceskComputedNoexcept</span><span class="Other">,</span>       <span class="Comment">## The cursor has exception specification computed noexcept.</span>
-  <span class="Identifier">ceskUnevaluated</span><span class="Other">,</span>            <span class="Comment">## The exception specification has not yet been evaluated.</span>
-  <span class="Identifier">ceskUninstantiated</span><span class="Other">,</span>         <span class="Comment">## The exception specification has not yet been instantiated.</span>
-  <span class="Identifier">ceskUnparsed</span><span class="Other">,</span>               <span class="Comment">## The exception specification has not been parsed yet.</span>
-  <span class="Identifier">ceskNoThrow</span>                 <span class="Comment">## The cursor has a __declspec(nothrow) exception specification.</span></pre></dt>
+  <span class="Identifier">ceskNone</span><span class="Other">,</span> <span class="Identifier">ceskDynamicNone</span><span class="Other">,</span> <span class="Identifier">ceskDynamic</span><span class="Other">,</span> <span class="Identifier">ceskMSAny</span><span class="Other">,</span> <span class="Identifier">ceskBasicNoexcept</span><span class="Other">,</span>
+  <span class="Identifier">ceskComputedNoexcept</span><span class="Other">,</span> <span class="Identifier">ceskUnevaluated</span><span class="Other">,</span> <span class="Identifier">ceskUninstantiated</span><span class="Other">,</span> <span class="Identifier">ceskUnparsed</span><span class="Other">,</span>
+  <span class="Identifier">ceskNoThrow</span></pre></dt>
 <dd>
 
 Describes the exception specification of a cursor. A negative value indicates that the cursor is not a function declaration.
@@ -3151,14 +3023,7 @@ Describes the kind of entity that a cursor refers to. <strong>SKipped enum value
 </dd>
 <a id="CXLinkageKind"></a>
 <dt><pre><a href="libclang.html#CXLinkageKind"><span class="Identifier">CXLinkageKind</span></a> <span class="Other">=</span> <span class="Keyword">enum</span>
-  <span class="Identifier">lkInvalid</span><span class="Other">,</span> <span class="Comment">## This value indicates that no linkage information is available</span>
-            <span class="Comment">## for a provided CXCursor. </span>
-  <span class="Identifier">lkNoLinkage</span><span class="Other">,</span> <span class="Comment">## This is the linkage for variables, parameters, and so on that</span>
-              <span class="Comment">##  have automatic storage.  This covers normal (non-extern) local variables.</span>
-  <span class="Identifier">lkInternal</span><span class="Other">,</span>                 <span class="Comment">## This is the linkage for static variables and static functions. </span>
-  <span class="Identifier">lkUniqueExternal</span><span class="Other">,</span> <span class="Comment">## This is the linkage for entities with external linkage that live</span>
-                   <span class="Comment">## in C++ anonymous namespaces.</span>
-  <span class="Identifier">lkExternal</span>                  <span class="Comment">## This is the linkage for entities with true, external linkage. </span></pre></dt>
+  <span class="Identifier">lkInvalid</span><span class="Other">,</span> <span class="Identifier">lkNoLinkage</span><span class="Other">,</span> <span class="Identifier">lkInternal</span><span class="Other">,</span> <span class="Identifier">lkUniqueExternal</span><span class="Other">,</span> <span class="Identifier">lkExternal</span></pre></dt>
 <dd>
 
 Describe the linkage of the entity referred to by a cursor.
@@ -3166,11 +3031,7 @@ Describe the linkage of the entity referred to by a cursor.
 </dd>
 <a id="CXVisibilityKind"></a>
 <dt><pre><a href="libclang.html#CXVisibilityKind"><span class="Identifier">CXVisibilityKind</span></a> <span class="Other">=</span> <span class="Keyword">enum</span>
-  <span class="Identifier">vkInvalid</span><span class="Other">,</span> <span class="Comment">## This value indicates that no visibility information is available</span>
-            <span class="Comment">## for a provided CXCursor. </span>
-  <span class="Identifier">vkHidden</span><span class="Other">,</span>                   <span class="Comment">## Symbol not seen by the linker. </span>
-  <span class="Identifier">vkProtected</span><span class="Other">,</span>                <span class="Comment">## Symbol seen by the linker but resolves to a symbol inside this object. </span>
-  <span class="Identifier">vkDefault</span>                   <span class="Comment">## Symbol seen by the linker and acts like a normal symbol. </span></pre></dt>
+  <span class="Identifier">vkInvalid</span><span class="Other">,</span> <span class="Identifier">vkHidden</span><span class="Other">,</span> <span class="Identifier">vkProtected</span><span class="Other">,</span> <span class="Identifier">vkDefault</span></pre></dt>
 <dd>
 
 
@@ -3333,8 +3194,7 @@ List the possible error codes for and A value of this enumeration type can be re
 <a id="CXRefQualifierKind"></a>
 <dt><pre><a href="libclang.html#CXRefQualifierKind"><span class="Identifier">CXRefQualifierKind</span></a> <span class="Other">=</span> <span class="Keyword">enum</span>
   <span class="Identifier">rqkNone</span> <span class="Other">=</span> <span class="DecNumber">0</span><span class="Other">,</span>                  <span class="Comment">## No ref-qualifier was provided. </span>
-  <span class="Identifier">rqkLValue</span><span class="Other">,</span>                  <span class="Comment">## An lvalue ref-qualifier was provided (</span>
-  <span class="Identifier">rqkRValue</span>                   <span class="Comment">## An rvalue ref-qualifier was provided (</span></pre></dt>
+  <span class="Identifier">rqkLValue</span><span class="Other">,</span> <span class="Identifier">rqkRValue</span></pre></dt>
 <dd>
 
 
@@ -3359,11 +3219,7 @@ Represents the storage classes as declared in the source. CX_SC_Invalid was adde
 </dd>
 <a id="CXChildVisitResult"></a>
 <dt><pre><a href="libclang.html#CXChildVisitResult"><span class="Identifier">CXChildVisitResult</span></a> <span class="Other">=</span> <span class="Keyword">enum</span>
-  <span class="Identifier">cvrBreak</span><span class="Other">,</span>                   <span class="Comment">## Terminates the cursor traversal.</span>
-  <span class="Identifier">cvrContinue</span><span class="Other">,</span> <span class="Comment">## Continues the cursor traversal with the next sibling of</span>
-              <span class="Comment">## the cursor just visited, without visiting its children.</span>
-  <span class="Identifier">cvrRecurse</span> <span class="Comment">## Recursively traverse the children of this cursor, using</span>
-            <span class="Comment">## the same visitor and client data.</span></pre></dt>
+  <span class="Identifier">cvrBreak</span><span class="Other">,</span> <span class="Identifier">cvrContinue</span><span class="Other">,</span> <span class="Identifier">cvrRecurse</span></pre></dt>
 <dd>
 
 Describes how the traversal of the children of a particular cursor should proceed after visiting a particular child cursor. A value of this enumeration type should be returned by each to indicate how clang_visitChildren() proceed.
@@ -3450,11 +3306,7 @@ Property attributes for a
 </dd>
 <a id="CXTokenKind"></a>
 <dt><pre><a href="libclang.html#CXTokenKind"><span class="Identifier">CXTokenKind</span></a> <span class="Other">=</span> <span class="Keyword">enum</span>
-  <span class="Identifier">tokPunctuation</span><span class="Other">,</span>             <span class="Comment">## A token that contains some kind of punctuation.</span>
-  <span class="Identifier">tokKeyword</span><span class="Other">,</span>                 <span class="Comment">## A language keyword.</span>
-  <span class="Identifier">tokIdentifier</span><span class="Other">,</span>              <span class="Comment">## An identifier (that is not a keyword).</span>
-  <span class="Identifier">tokLiteral</span><span class="Other">,</span>                 <span class="Comment">## A numeric, string, or character literal.</span>
-  <span class="Identifier">tokComment</span>                  <span class="Comment">## A comment.</span></pre></dt>
+  <span class="Identifier">tokPunctuation</span><span class="Other">,</span> <span class="Identifier">tokKeyword</span><span class="Other">,</span> <span class="Identifier">tokIdentifier</span><span class="Other">,</span> <span class="Identifier">tokLiteral</span><span class="Other">,</span> <span class="Identifier">tokComment</span></pre></dt>
 <dd>
 
 Describes a kind of token.
@@ -3489,94 +3341,10 @@ Describes a kind of token.
 </dd>
 <a id="CXCompletionChunkKind"></a>
 <dt><pre><a href="libclang.html#CXCompletionChunkKind"><span class="Identifier">CXCompletionChunkKind</span></a> <span class="Other">=</span> <span class="Keyword">enum</span>
-  <span class="Identifier">cckOptional</span><span class="Other">,</span> <span class="Comment">## A code-completion string that describes &quot;optional&quot; text that</span>
-              <span class="Comment">## could be a part of the template (but is not required).</span>
-              <span class="Comment">## The Optional chunk is the only kind of chunk that has a code-completion</span>
-              <span class="Comment">## string for its representation, which is accessible via</span>
-              <span class="Comment">## The code-completion string</span>
-              <span class="Comment">## describes an additional part of the template that is completely optional.</span>
-              <span class="Comment">## For example, optional chunks can be used to describe the placeholders for</span>
-              <span class="Comment">## arguments that match up with defaulted function parameters, e.g. given:</span>
-              <span class="Comment">## Error: cannot render: rnCodeBlock</span>
-              <span class="Comment">## The code-completion string for this function would contain:</span>
-              <span class="Comment">##   - a TypedText chunk for &quot;f&quot;.</span>
-              <span class="Comment">##   - a LeftParen chunk for &quot;(&quot;.</span>
-              <span class="Comment">##   - a Placeholder chunk for &quot;int x&quot;</span>
-              <span class="Comment">##   - an Optional chunk containing the remaining defaulted arguments, e.g.,</span>
-              <span class="Comment">##       - a Comma chunk for &quot;,&quot;</span>
-              <span class="Comment">##       - a Placeholder chunk for &quot;float y&quot;</span>
-              <span class="Comment">##       - an Optional chunk containing the last defaulted argument:</span>
-              <span class="Comment">##           - a Comma chunk for &quot;,&quot;</span>
-              <span class="Comment">##           - a Placeholder chunk for &quot;double z&quot;</span>
-              <span class="Comment">##   - a RightParen chunk for &quot;)&quot;</span>
-              <span class="Comment">## There are many ways to handle Optional chunks. Two simple approaches are:</span>
-              <span class="Comment">##   - Completely ignore optional chunks, in which case the template for the</span>
-              <span class="Comment">##     function &quot;f&quot; would only include the first parameter (&quot;int x&quot;).</span>
-              <span class="Comment">##   - Fully expand all optional chunks, in which case the template for the</span>
-              <span class="Comment">##     function &quot;f&quot; would have all of the parameters.</span>
-  <span class="Identifier">cckTypedText</span><span class="Other">,</span> <span class="Comment">## Text that a user would be expected to type to get this</span>
-               <span class="Comment">## code-completion result.</span>
-               <span class="Comment">## There will be exactly one &quot;typed text&quot; chunk in a semantic string, which</span>
-               <span class="Comment">## will typically provide the spelling of a keyword or the name of a</span>
-               <span class="Comment">## declaration that could be used at the current code point. Clients are</span>
-               <span class="Comment">## expected to filter the code-completion results based on the text in this</span>
-               <span class="Comment">## chunk.</span>
-  <span class="Identifier">cckText</span><span class="Other">,</span> <span class="Comment">## Text that should be inserted as part of a code-completion result.</span>
-          <span class="Comment">## A &quot;text&quot; chunk represents text that is part of the template to be</span>
-          <span class="Comment">## inserted into user code should this particular code-completion result</span>
-          <span class="Comment">## be selected.</span>
-  <span class="Identifier">cckPlaceholder</span><span class="Other">,</span> <span class="Comment">## Placeholder text that should be replaced by the user.</span>
-                 <span class="Comment">## A &quot;placeholder&quot; chunk marks a place where the user should insert text</span>
-                 <span class="Comment">## into the code-completion template. For example, placeholders might mark</span>
-                 <span class="Comment">## the function parameters for a function declaration, to indicate that the</span>
-                 <span class="Comment">## user should provide arguments for each of those parameters. The actual</span>
-                 <span class="Comment">## text in a placeholder is a suggestion for the text to display before</span>
-                 <span class="Comment">## the user replaces the placeholder with real code.</span>
-  <span class="Identifier">cckInformative</span><span class="Other">,</span> <span class="Comment">## Informative text that should be displayed but never inserted as</span>
-                 <span class="Comment">## part of the template.</span>
-                 <span class="Comment">## An &quot;informative&quot; chunk contains annotations that can be displayed to</span>
-                 <span class="Comment">## help the user decide whether a particular code-completion result is the</span>
-                 <span class="Comment">## right option, but which is not part of the actual template to be inserted</span>
-                 <span class="Comment">## by code completion.</span>
-  <span class="Identifier">cckCurrentParameter</span><span class="Other">,</span> <span class="Comment">## Text that describes the current parameter when code-completion is</span>
-                      <span class="Comment">## referring to function call, message send, or template specialization.</span>
-                      <span class="Comment">## A &quot;current parameter&quot; chunk occurs when code-completion is providing</span>
-                      <span class="Comment">## information about a parameter corresponding to the argument at the</span>
-                      <span class="Comment">## code-completion point. For example, given a function</span>
-                      <span class="Comment">## Error: cannot render: rnCodeBlock</span>
-                      <span class="Comment">## and the source code </span>
-                      <span class="Comment">## where the code-completion point is after the</span>
-                      <span class="Comment">## &quot;(&quot;, the code-completion string will contain a &quot;current parameter&quot; chunk</span>
-                      <span class="Comment">## for &quot;int x&quot;, indicating that the current argument will initialize that</span>
-                      <span class="Comment">## parameter. After typing further, to </span>
-                      <span class="Comment">## (where the code-completion</span>
-                      <span class="Comment">## point is after the &quot;,&quot;), the code-completion string will contain a</span>
-                      <span class="Comment">## &quot;current parameter&quot; chunk to &quot;int y&quot;.</span>
-  <span class="Identifier">cckLeftParen</span><span class="Other">,</span> <span class="Comment">## A left parenthesis ('('), used to initiate a function call or</span>
-               <span class="Comment">## signal the beginning of a function parameter list.</span>
-  <span class="Identifier">cckRightParen</span><span class="Other">,</span> <span class="Comment">## A right parenthesis (')'), used to finish a function call or</span>
-                <span class="Comment">## signal the end of a function parameter list.</span>
-  <span class="Identifier">cckLeftBracket</span><span class="Other">,</span>             <span class="Comment">## A left bracket ('[').</span>
-  <span class="Identifier">cckRightBracket</span><span class="Other">,</span>            <span class="Comment">## A right bracket (']').</span>
-  <span class="Identifier">cckLeftBrace</span><span class="Other">,</span>               <span class="Comment">## A left brace ('{').</span>
-  <span class="Identifier">cckRightBrace</span><span class="Other">,</span>              <span class="Comment">## A right brace ('}').</span>
-  <span class="Identifier">cckLeftAngle</span><span class="Other">,</span>               <span class="Comment">## A left angle bracket ('</span>
-               <span class="Comment">## &lt;</span>
-               <span class="Comment">## ').</span>
-  <span class="Identifier">cckRightAngle</span><span class="Other">,</span>              <span class="Comment">## A right angle bracket ('&gt;').</span>
-  <span class="Identifier">cckComma</span><span class="Other">,</span>                   <span class="Comment">## A comma separator (',').</span>
-  <span class="Identifier">cckResultType</span><span class="Other">,</span> <span class="Comment">## Text that specifies the result type of a given result.</span>
-                <span class="Comment">## This special kind of informative chunk is not meant to be inserted into</span>
-                <span class="Comment">## the text buffer. Rather, it is meant to illustrate the type that an</span>
-                <span class="Comment">## expression using the given completion string would have.</span>
-  <span class="Identifier">cckColon</span><span class="Other">,</span>                   <span class="Comment">## A colon (':').</span>
-  <span class="Identifier">cckSemiColon</span><span class="Other">,</span>               <span class="Comment">## A semicolon (';').</span>
-  <span class="Identifier">cckEqual</span><span class="Other">,</span>                   <span class="Comment">## An '=' sign.</span>
-  <span class="Identifier">cckHorizontalSpace</span><span class="Other">,</span>         <span class="Comment">## Horizontal space (' ').</span>
-  <span class="Identifier">cckVerticalSpace</span>            <span class="Comment">## Vertical space ('</span>
-                  <span class="Comment">## \\</span>
-                  <span class="Comment">## n'), after which it is generally a good idea to</span>
-                  <span class="Comment">## perform indentation.</span></pre></dt>
+  <span class="Identifier">cckOptional</span><span class="Other">,</span> <span class="Identifier">cckTypedText</span><span class="Other">,</span> <span class="Identifier">cckText</span><span class="Other">,</span> <span class="Identifier">cckPlaceholder</span><span class="Other">,</span> <span class="Identifier">cckInformative</span><span class="Other">,</span>
+  <span class="Identifier">cckCurrentParameter</span><span class="Other">,</span> <span class="Identifier">cckLeftParen</span><span class="Other">,</span> <span class="Identifier">cckRightParen</span><span class="Other">,</span> <span class="Identifier">cckLeftBracket</span><span class="Other">,</span> <span class="Identifier">cckRightBracket</span><span class="Other">,</span>
+  <span class="Identifier">cckLeftBrace</span><span class="Other">,</span> <span class="Identifier">cckRightBrace</span><span class="Other">,</span> <span class="Identifier">cckLeftAngle</span><span class="Other">,</span> <span class="Identifier">cckRightAngle</span><span class="Other">,</span> <span class="Identifier">cckComma</span><span class="Other">,</span> <span class="Identifier">cckResultType</span><span class="Other">,</span>
+  <span class="Identifier">cckColon</span><span class="Other">,</span> <span class="Identifier">cckSemiColon</span><span class="Other">,</span> <span class="Identifier">cckEqual</span><span class="Other">,</span> <span class="Identifier">cckHorizontalSpace</span><span class="Other">,</span> <span class="Identifier">cckVerticalSpace</span></pre></dt>
 <dd>
 
 Describes a single piece of text within a code-completion string. Each &quot;chunk&quot; within a code-completion string ( is either a piece of text with a specific &quot;kind&quot; that describes how that text should be interpreted by the client or is another completion string.
@@ -3653,7 +3421,7 @@ Flags that can be passed to to modify its behavior. The enumerators in this enum
                        <span class="Comment">## the results.</span>
   <span class="Identifier">cocNaturalLanguage</span> <span class="Other">=</span> <span class="DecNumber">2097152</span><span class="Other">,</span> <span class="Comment">## Natural language completions should be included in the results.</span>
   <span class="Identifier">cocIncludedFile</span> <span class="Other">=</span> <span class="DecNumber">4194304</span><span class="Other">,</span>    <span class="Comment">## #include file completions should be included in the results.</span>
-  <span class="Identifier">cocUnknown</span>                  <span class="Comment">## The current context is unknown, so set all contexts.</span></pre></dt>
+  <span class="Identifier">cocUnknown</span></pre></dt>
 <dd>
 
 Bits that represent the context under which completion is occurring. The enumerators in this enumeration may be bitwise-OR'd together if multiple contexts are occurring simultaneously.
@@ -4166,12 +3934,7 @@ Roles that are attributed to symbol occurrences. Internal: this currently mirror
 </dd>
 <a id="CXCommentInlineCommandRenderKind"></a>
 <dt><pre><a href="libclang.html#CXCommentInlineCommandRenderKind"><span class="Identifier">CXCommentInlineCommandRenderKind</span></a> <span class="Other">=</span> <span class="Keyword">enum</span>
-  <span class="Identifier">cicrkNormal</span><span class="Other">,</span>                <span class="Comment">## Command argument should be rendered in a normal font.</span>
-  <span class="Identifier">cicrkBold</span><span class="Other">,</span>                  <span class="Comment">## Command argument should be rendered in a bold font.</span>
-  <span class="Identifier">cicrkMonospaced</span><span class="Other">,</span>            <span class="Comment">## Command argument should be rendered in a monospaced font.</span>
-  <span class="Identifier">cicrkEmphasized</span><span class="Other">,</span> <span class="Comment">## Command argument should be rendered emphasized (typically italic</span>
-                  <span class="Comment">## font).</span>
-  <span class="Identifier">cicrkAnchor</span>                 <span class="Comment">## Command argument should not be rendered (since it only defines an anchor).</span></pre></dt>
+  <span class="Identifier">cicrkNormal</span><span class="Other">,</span> <span class="Identifier">cicrkBold</span><span class="Other">,</span> <span class="Identifier">cicrkMonospaced</span><span class="Other">,</span> <span class="Identifier">cicrkEmphasized</span><span class="Other">,</span> <span class="Identifier">cicrkAnchor</span></pre></dt>
 <dd>
 
 The most appropriate rendering mode for an inline command, chosen on command semantics in Doxygen.
@@ -4179,9 +3942,7 @@ The most appropriate rendering mode for an inline command, chosen on command sem
 </dd>
 <a id="CXCommentParamPassDirection"></a>
 <dt><pre><a href="libclang.html#CXCommentParamPassDirection"><span class="Identifier">CXCommentParamPassDirection</span></a> <span class="Other">=</span> <span class="Keyword">enum</span>
-  <span class="Identifier">cppdIn</span><span class="Other">,</span>                     <span class="Comment">## The parameter is an input parameter.</span>
-  <span class="Identifier">cppdOut</span><span class="Other">,</span>                    <span class="Comment">## The parameter is an output parameter.</span>
-  <span class="Identifier">cppdInOut</span>                   <span class="Comment">## The parameter is an input and output parameter.</span></pre></dt>
+  <span class="Identifier">cppdIn</span><span class="Other">,</span> <span class="Identifier">cppdOut</span><span class="Other">,</span> <span class="Identifier">cppdInOut</span></pre></dt>
 <dd>
 
 Describes parameter passing direction for \ param or \ arg command.
@@ -7720,6 +7481,62 @@ Convert a given full parsed comment to an HTML fragment. Specific details of HTM
 Convert a given full parsed comment to an XML document. A Relax NG schema for the XML can be found in comment-xml-schema.rng file inside clang source tree. <strong>Comment</strong> a AST node. ** string containing an XML document.
 
 </dd>
+<a id="$,CXString"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#%24%2CCXString"><span class="Identifier">`$`</span></a><span class="Other">(</span><span class="Identifier">cxstr</span><span class="Other">:</span> <a href="libclang.html#CXString"><span class="Identifier">CXString</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+
+
+</dd>
+<a id="$,CXCursor"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#%24%2CCXCursor"><span class="Identifier">`$`</span></a><span class="Other">(</span><span class="Identifier">cursor</span><span class="Other">:</span> <a href="libclang.html#CXCursor"><span class="Identifier">CXCursor</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+
+
+</dd>
+<a id="$,CXType"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#%24%2CCXType"><span class="Identifier">`$`</span></a><span class="Other">(</span><span class="Identifier">cxtype</span><span class="Other">:</span> <a href="libclang.html#CXType"><span class="Identifier">CXType</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+
+
+</dd>
+<a id="$,CXCursorKind"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#%24%2CCXCursorKind"><span class="Identifier">`$`</span></a><span class="Other">(</span><span class="Identifier">cxkind</span><span class="Other">:</span> <a href="libclang.html#CXCursorKind"><span class="Identifier">CXCursorKind</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+
+
+</dd>
+<a id="=destroy,CXTranslationUnit"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#%3Ddestroy%2CCXTranslationUnit"><span class="Identifier">`=destroy`</span></a><span class="Other">(</span><span class="Identifier">tu</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="libclang.html#CXTranslationUnit"><span class="Identifier">CXTranslationUnit</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">void</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+
+
+</dd>
+<a id="=destroy,CXIndex"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#%3Ddestroy%2CCXIndex"><span class="Identifier">`=destroy`</span></a><span class="Other">(</span><span class="Identifier">index</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="libclang.html#CXIndex"><span class="Identifier">CXIndex</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">void</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+
+
+</dd>
+<a id="=destroy,CXCompilationDatabase"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#%3Ddestroy%2CCXCompilationDatabase"><span class="Identifier">`=destroy`</span></a><span class="Other">(</span><span class="Identifier">dbase</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="libclang.html#CXCompilationDatabase"><span class="Identifier">CXCompilationDatabase</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">void</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+
+
+</dd>
+<a id="=dispose,CXCompileCommands"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#%3Ddispose%2CCXCompileCommands"><span class="Identifier">`=dispose`</span></a><span class="Other">(</span><span class="Identifier">commands</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="libclang.html#CXCompileCommands"><span class="Identifier">CXCompileCommands</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">void</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+
+
+</dd>
 <a id="getDiagnostics,CXTranslationUnit"></a>
 <dt><pre><span class="Keyword">proc</span> <a href="#getDiagnostics%2CCXTranslationUnit"><span class="Identifier">getDiagnostics</span></a><span class="Other">(</span><span class="Identifier">unit</span><span class="Other">:</span> <a href="libclang.html#CXTranslationUnit"><span class="Identifier">CXTranslationUnit</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><a href="libclang.html#CXDiagnostic"><span class="Identifier">CXDiagnostic</span></a><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
@@ -7757,11 +7574,26 @@ Create compilation database from database found in directory <tt class="docutils
 Get arguments for compile command <tt class="docutils literal"><span class="pre">command</span></tt>
 
 </dd>
-<a id="parseTranslationUnit,CXIndex,string,seq[string],set[CXTranslationUnit_Flags]"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#parseTranslationUnit%2CCXIndex%2Cstring%2Cseq%5Bstring%5D%2Cset%5BCXTranslationUnit_Flags%5D"><span class="Identifier">parseTranslationUnit</span></a><span class="Other">(</span><span class="Identifier">trIndex</span><span class="Other">:</span> <a href="libclang.html#CXIndex"><span class="Identifier">CXIndex</span></a><span class="Other">;</span> <span class="Identifier">filename</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span>
+<a id="[],CXCompileCommands,int"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#%5B%5D%2CCXCompileCommands%2Cint"><span class="Identifier">`[]`</span></a><span class="Other">(</span><span class="Identifier">commands</span><span class="Other">:</span> <a href="libclang.html#CXCompileCommands"><span class="Identifier">CXCompileCommands</span></a><span class="Other">;</span> <span class="Identifier">idx</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span><span class="Other">:</span> <a href="libclang.html#CXCompileCommand"><span class="Identifier">CXCompileCommand</span></a> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+
+
+</dd>
+<a id="isNil,CXTranslationUnit"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#isNil%2CCXTranslationUnit"><span class="Identifier">isNil</span></a><span class="Other">(</span><span class="Identifier">tu</span><span class="Other">:</span> <a href="libclang.html#CXTranslationUnit"><span class="Identifier">CXTranslationUnit</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+
+
+</dd>
+<a id="parseTranslationUnit,CXIndex,string,seq[string],set[CXTranslationUnit_Flags],bool"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#parseTranslationUnit%2CCXIndex%2Cstring%2Cseq%5Bstring%5D%2Cset%5BCXTranslationUnit_Flags%5D%2Cbool"><span class="Identifier">parseTranslationUnit</span></a><span class="Other">(</span><span class="Identifier">trIndex</span><span class="Other">:</span> <a href="libclang.html#CXIndex"><span class="Identifier">CXIndex</span></a><span class="Other">;</span> <span class="Identifier">filename</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span>
                          <span class="Identifier">cmdline</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other">=</span> <span class="Operator">@</span><span class="Other">[</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">trOptions</span><span class="Other">:</span> <span class="Identifier">set</span><span class="Other">[</span>
-    <a href="libclang.html#CXTranslationUnit_Flags"><span class="Identifier">CXTranslationUnit_Flags</span></a><span class="Other">]</span> <span class="Other">=</span> <span class="Other">{</span><span class="Identifier">tufSingleFileParse</span><span class="Other">}</span><span class="Other">)</span><span class="Other">:</span> <a href="libclang.html#CXTranslationUnit"><span class="Identifier">CXTranslationUnit</span></a> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">AssertionError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+    <a href="libclang.html#CXTranslationUnit_Flags"><span class="Identifier">CXTranslationUnit_Flags</span></a><span class="Other">]</span> <span class="Other">=</span> <span class="Other">{</span><span class="Identifier">tufSingleFileParse</span><span class="Other">}</span><span class="Other">;</span> <span class="Identifier">reparseOnNil</span><span class="Other">:</span> <span class="Identifier">bool</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">)</span><span class="Other">:</span> <a href="libclang.html#CXTranslationUnit"><span class="Identifier">CXTranslationUnit</span></a> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 
@@ -7776,19 +7608,18 @@ Get arguments for compile command <tt class="docutils literal"><span class="pre"
 
 
 </dd>
-<a id="parseTranslationUnit,CXIndex,CXCompileCommand"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#parseTranslationUnit%2CCXIndex%2CCXCompileCommand"><span class="Identifier">parseTranslationUnit</span></a><span class="Other">(</span><span class="Identifier">index</span><span class="Other">:</span> <a href="libclang.html#CXIndex"><span class="Identifier">CXIndex</span></a><span class="Other">;</span> <span class="Identifier">command</span><span class="Other">:</span> <a href="libclang.html#CXCompileCommand"><span class="Identifier">CXCompileCommand</span></a><span class="Other">)</span><span class="Other">:</span> <a href="libclang.html#CXTranslationUnit"><span class="Identifier">CXTranslationUnit</span></a> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">,</span> <span class="Identifier">AssertionError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<a id="parseTranslationUnit,CXIndex,CXCompileCommand,seq[string]"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#parseTranslationUnit%2CCXIndex%2CCXCompileCommand%2Cseq%5Bstring%5D"><span class="Identifier">parseTranslationUnit</span></a><span class="Other">(</span><span class="Identifier">index</span><span class="Other">:</span> <a href="libclang.html#CXIndex"><span class="Identifier">CXIndex</span></a><span class="Other">;</span> <span class="Identifier">command</span><span class="Other">:</span> <a href="libclang.html#CXCompileCommand"><span class="Identifier">CXCompileCommand</span></a><span class="Other">;</span>
+                         <span class="Identifier">extraFlags</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other">=</span> <span class="Operator">@</span><span class="Other">[</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <a href="libclang.html#CXTranslationUnit"><span class="Identifier">CXTranslationUnit</span></a> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 Get file and compilation flags from compilation command <tt class="docutils literal"><span class="pre">command</span></tt> and parse translation unit.
-
-</dd>
-<a id="isNil,CXTranslationUnit"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#isNil%2CCXTranslationUnit"><span class="Identifier">isNil</span></a><span class="Other">(</span><span class="Identifier">tu</span><span class="Other">:</span> <a href="libclang.html#CXTranslationUnit"><span class="Identifier">CXTranslationUnit</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-
-
+<h2><a class="toc-backref" id="parameters" href="#parameters">Parameters</a></h2><table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">index:</th><td> compilation index</td></tr>
+<tr><th class="docinfo-name">command:</th><td> Compilation command from database</td></tr>
+<tr><th class="docinfo-name">extraFlags:</th><td> Additional compilation flags for compiler. When parsing<p>c++ header files with <tt class="docutils literal"><span class="pre">.h</span></tt> extension you are most likely need to use <tt class="docutils literal"><span class="pre">@[&quot;-xc++&quot;]</span></tt> to make clang correctly recognize the language.</p>
+</td></tr>
+</tbody></table>
 
 </dd>
 <a id="toClientData,T"></a>
@@ -7810,34 +7641,6 @@ Get file and compilation flags from compilation command <tt class="docutils lite
 <dd>
 
 Overload for child visit used by <tt class="docutils literal"><span class="pre">makeVisitor</span></tt> macro
-
-</dd>
-<a id="$,CXString"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#%24%2CCXString"><span class="Identifier">`$`</span></a><span class="Other">(</span><span class="Identifier">cxstr</span><span class="Other">:</span> <a href="libclang.html#CXString"><span class="Identifier">CXString</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-
-
-
-</dd>
-<a id="$,CXCursor"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#%24%2CCXCursor"><span class="Identifier">`$`</span></a><span class="Other">(</span><span class="Identifier">cursor</span><span class="Other">:</span> <a href="libclang.html#CXCursor"><span class="Identifier">CXCursor</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-
-
-
-</dd>
-<a id="$,CXType"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#%24%2CCXType"><span class="Identifier">`$`</span></a><span class="Other">(</span><span class="Identifier">cxtype</span><span class="Other">:</span> <a href="libclang.html#CXType"><span class="Identifier">CXType</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-
-
-
-</dd>
-<a id="$,CXCursorKind"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#%24%2CCXCursorKind"><span class="Identifier">`$`</span></a><span class="Other">(</span><span class="Identifier">cxkind</span><span class="Other">:</span> <a href="libclang.html#CXCursorKind"><span class="Identifier">CXCursorKind</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-
-
 
 </dd>
 <a id="==,CXType,CXType"></a>
@@ -7869,11 +7672,18 @@ Get kind of cursor
 
 </dd>
 <a id="expectKind,CXCursor,CXCursorKind"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#expectKind%2CCXCursor%2CCXCursorKind"><span class="Identifier">expectKind</span></a><span class="Other">(</span><span class="Identifier">cursor</span><span class="Other">:</span> <a href="libclang.html#CXCursor"><span class="Identifier">CXCursor</span></a><span class="Other">;</span> <span class="Identifier">kind</span><span class="Other">:</span> <a href="libclang.html#CXCursorKind"><span class="Identifier">CXCursorKind</span></a><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">AssertionError</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <a href="#expectKind%2CCXCursor%2CCXCursorKind"><span class="Identifier">expectKind</span></a><span class="Other">(</span><span class="Identifier">cursor</span><span class="Other">:</span> <a href="libclang.html#CXCursor"><span class="Identifier">CXCursor</span></a><span class="Other">;</span> <span class="Identifier">kind</span><span class="Other">:</span> <a href="libclang.html#CXCursorKind"><span class="Identifier">CXCursorKind</span></a><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 Raise assertion if cursor kind does not match
+
+</dd>
+<a id="expectKind,CXCursor,set[CXCursorKind]"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#expectKind%2CCXCursor%2Cset%5BCXCursorKind%5D"><span class="Identifier">expectKind</span></a><span class="Other">(</span><span class="Identifier">cursor</span><span class="Other">:</span> <a href="libclang.html#CXCursor"><span class="Identifier">CXCursor</span></a><span class="Other">;</span> <span class="Identifier">kind</span><span class="Other">:</span> <span class="Identifier">set</span><span class="Other">[</span><a href="libclang.html#CXCursorKind"><span class="Identifier">CXCursorKind</span></a><span class="Other">]</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Raise assertion if cursor kind is not in set
 
 </dd>
 <a id="cxType,CXCursor"></a>
@@ -7899,7 +7709,7 @@ Get sequence of subnodes for cursor
 
 </dd>
 <a id="[],CXCursor,int"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#%5B%5D%2CCXCursor%2Cint"><span class="Identifier">`[]`</span></a><span class="Other">(</span><span class="Identifier">cursor</span><span class="Other">:</span> <a href="libclang.html#CXCursor"><span class="Identifier">CXCursor</span></a><span class="Other">;</span> <span class="Identifier">idx</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span><span class="Other">:</span> <a href="libclang.html#CXCursor"><span class="Identifier">CXCursor</span></a> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">IndexError</span><span class="Other">]</span><span class="Other">,</span>
+<dt><pre><span class="Keyword">proc</span> <a href="#%5B%5D%2CCXCursor%2Cint"><span class="Identifier">`[]`</span></a><span class="Other">(</span><span class="Identifier">cursor</span><span class="Other">:</span> <a href="libclang.html#CXCursor"><span class="Identifier">CXCursor</span></a><span class="Other">;</span> <span class="Identifier">idx</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span><span class="Other">:</span> <a href="libclang.html#CXCursor"><span class="Identifier">CXCursor</span></a> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span>
     <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
@@ -7952,15 +7762,14 @@ Get type kind
 
 </dd>
 <a id="expectKind,CXType,CXTypeKind"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#expectKind%2CCXType%2CCXTypeKind"><span class="Identifier">expectKind</span></a><span class="Other">(</span><span class="Identifier">cxtype</span><span class="Other">:</span> <a href="libclang.html#CXType"><span class="Identifier">CXType</span></a><span class="Other">;</span> <span class="Identifier">kind</span><span class="Other">:</span> <a href="libclang.html#CXTypeKind"><span class="Identifier">CXTypeKind</span></a><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">AssertionError</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <a href="#expectKind%2CCXType%2CCXTypeKind"><span class="Identifier">expectKind</span></a><span class="Other">(</span><span class="Identifier">cxtype</span><span class="Other">:</span> <a href="libclang.html#CXType"><span class="Identifier">CXType</span></a><span class="Other">;</span> <span class="Identifier">kind</span><span class="Other">:</span> <a href="libclang.html#CXTypeKind"><span class="Identifier">CXTypeKind</span></a><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 Raise assertion if cursor kind does not match
 
 </dd>
 <a id="argc,CXType"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#argc%2CCXType"><span class="Identifier">argc</span></a><span class="Other">(</span><span class="Identifier">cxtype</span><span class="Other">:</span> <a href="libclang.html#CXType"><span class="Identifier">CXType</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">AssertionError</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <a href="#argc%2CCXType"><span class="Identifier">argc</span></a><span class="Other">(</span><span class="Identifier">cxtype</span><span class="Other">:</span> <a href="libclang.html#CXType"><span class="Identifier">CXType</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 Get numbler of arguments in function type
@@ -7974,22 +7783,21 @@ Get numbler of arguments in function type
 
 </dd>
 <a id="retType,CXCursor"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#retType%2CCXCursor"><span class="Identifier">retType</span></a><span class="Other">(</span><span class="Identifier">cursor</span><span class="Other">:</span> <a href="libclang.html#CXCursor"><span class="Identifier">CXCursor</span></a><span class="Other">)</span><span class="Other">:</span> <a href="libclang.html#CXType"><span class="Identifier">CXType</span></a> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">AssertionError</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <a href="#retType%2CCXCursor"><span class="Identifier">retType</span></a><span class="Other">(</span><span class="Identifier">cursor</span><span class="Other">:</span> <a href="libclang.html#CXCursor"><span class="Identifier">CXCursor</span></a><span class="Other">)</span><span class="Other">:</span> <a href="libclang.html#CXType"><span class="Identifier">CXType</span></a> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 
 
 </dd>
 <a id="argc,CXCursor"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#argc%2CCXCursor"><span class="Identifier">argc</span></a><span class="Other">(</span><span class="Identifier">cursor</span><span class="Other">:</span> <a href="libclang.html#CXCursor"><span class="Identifier">CXCursor</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">AssertionError</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <a href="#argc%2CCXCursor"><span class="Identifier">argc</span></a><span class="Other">(</span><span class="Identifier">cursor</span><span class="Other">:</span> <a href="libclang.html#CXCursor"><span class="Identifier">CXCursor</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 Get number of arguments in cursor pointing to function
 
 </dd>
 <a id="nthArg,CXType,int"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#nthArg%2CCXType%2Cint"><span class="Identifier">nthArg</span></a><span class="Other">(</span><span class="Identifier">cxtype</span><span class="Other">:</span> <a href="libclang.html#CXType"><span class="Identifier">CXType</span></a><span class="Other">;</span> <span class="Identifier">idx</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span><span class="Other">:</span> <a href="libclang.html#CXType"><span class="Identifier">CXType</span></a> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">AssertionError</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span>
-    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <a href="#nthArg%2CCXType%2Cint"><span class="Identifier">nthArg</span></a><span class="Other">(</span><span class="Identifier">cxtype</span><span class="Other">:</span> <a href="libclang.html#CXType"><span class="Identifier">CXType</span></a><span class="Other">;</span> <span class="Identifier">idx</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span><span class="Other">:</span> <a href="libclang.html#CXType"><span class="Identifier">CXType</span></a> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 Retrieve type nth argument of function type
@@ -8051,29 +7859,28 @@ Generate pretty-printed tree representation of cursor.
 
 </dd>
 <a id="accs,CDecl"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#accs%2CCDecl"><span class="Identifier">accs</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="libclang.html#CDecl"><span class="Identifier">CDecl</span></a><span class="Other">)</span><span class="Other">:</span> <a href="libclang.html#CX_CXXAccessSpecifier"><span class="Identifier">CX_CXXAccessSpecifier</span></a> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">AssertionError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <a href="#accs%2CCDecl"><span class="Identifier">accs</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="libclang.html#CDecl"><span class="Identifier">CDecl</span></a><span class="Other">)</span><span class="Other">:</span> <a href="libclang.html#CX_CXXAccessSpecifier"><span class="Identifier">CX_CXXAccessSpecifier</span></a> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 
 
 </dd>
 <a id="accs=,CDecl,CX_CXXAccessSpecifier"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#accs%3D%2CCDecl%2CCX_CXXAccessSpecifier"><span class="Identifier">accs=</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="libclang.html#CDecl"><span class="Identifier">CDecl</span></a><span class="Other">;</span> <span class="Identifier">it</span><span class="Other">:</span> <a href="libclang.html#CX_CXXAccessSpecifier"><span class="Identifier">CX_CXXAccessSpecifier</span></a><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">AssertionError</span><span class="Other">]</span><span class="Other">,</span>
-    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <a href="#accs%3D%2CCDecl%2CCX_CXXAccessSpecifier"><span class="Identifier">accs=</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="libclang.html#CDecl"><span class="Identifier">CDecl</span></a><span class="Other">;</span> <span class="Identifier">it</span><span class="Other">:</span> <a href="libclang.html#CX_CXXAccessSpecifier"><span class="Identifier">CX_CXXAccessSpecifier</span></a><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 
 
 </dd>
 <a id="args,CDecl"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#args%2CCDecl"><span class="Identifier">args</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="libclang.html#CDecl"><span class="Identifier">CDecl</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><a href="libclang.html#CArg"><span class="Identifier">CArg</span></a><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">AssertionError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <a href="#args%2CCDecl"><span class="Identifier">args</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="libclang.html#CDecl"><span class="Identifier">CDecl</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><a href="libclang.html#CArg"><span class="Identifier">CArg</span></a><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 
 
 </dd>
 <a id="args=,CDecl,seq[CArg]"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#args%3D%2CCDecl%2Cseq%5BCArg%5D"><span class="Identifier">args=</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="libclang.html#CDecl"><span class="Identifier">CDecl</span></a><span class="Other">;</span> <span class="Identifier">it</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><a href="libclang.html#CArg"><span class="Identifier">CArg</span></a><span class="Other">]</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">AssertionError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <a href="#args%3D%2CCDecl%2Cseq%5BCArg%5D"><span class="Identifier">args=</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="libclang.html#CDecl"><span class="Identifier">CDecl</span></a><span class="Other">;</span> <span class="Identifier">it</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><a href="libclang.html#CArg"><span class="Identifier">CArg</span></a><span class="Other">]</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 
@@ -8095,7 +7902,7 @@ Generate pretty-printed tree representation of cursor.
 </dd>
 <a id="convertCFunction,CXCursor"></a>
 <dt><pre><span class="Keyword">proc</span> <a href="#convertCFunction%2CCXCursor"><span class="Identifier">convertCFunction</span></a><span class="Other">(</span><span class="Identifier">cursor</span><span class="Other">:</span> <a href="libclang.html#CXCursor"><span class="Identifier">CXCursor</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">ProcDecl</span><span class="Other">[</span><span class="Identifier">PNode</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">AssertionError</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">,</span> <span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">,</span> <span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 
@@ -8124,7 +7931,7 @@ Convert main file of translation unit into flattened sequence of high-level decl
 
 </dd>
 <a id="arg,CDecl,int"></a>
-<dt><pre><span class="Keyword">func</span> <a href="#arg%2CCDecl%2Cint"><span class="Identifier">arg</span></a><span class="Other">(</span><span class="Identifier">cd</span><span class="Other">:</span> <a href="libclang.html#CDecl"><span class="Identifier">CDecl</span></a><span class="Other">;</span> <span class="Identifier">idx</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span><span class="Other">:</span> <a href="libclang.html#CArg"><span class="Identifier">CArg</span></a> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">AssertionError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">func</span> <a href="#arg%2CCDecl%2Cint"><span class="Identifier">arg</span></a><span class="Other">(</span><span class="Identifier">cd</span><span class="Other">:</span> <a href="libclang.html#CDecl"><span class="Identifier">CDecl</span></a><span class="Other">;</span> <span class="Identifier">idx</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span><span class="Other">:</span> <a href="libclang.html#CArg"><span class="Identifier">CArg</span></a> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 
@@ -8142,6 +7949,13 @@ Convert main file of translation unit into flattened sequence of high-level decl
 <div class="section" id="15">
 <h1><a class="toc-backref" href="#15">Iterators</a></h1>
 <dl class="item">
+<a id="items.i,CXCompileCommands"></a>
+<dt><pre><span class="Keyword">iterator</span> <a href="#items.i%2CCXCompileCommands"><span class="Identifier">items</span></a><span class="Other">(</span><span class="Identifier">commands</span><span class="Other">:</span> <a href="libclang.html#CXCompileCommands"><span class="Identifier">CXCompileCommands</span></a><span class="Other">)</span><span class="Other">:</span> <a href="libclang.html#CXCompileCommand"><span class="Identifier">CXCompileCommand</span></a> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+
+
+</dd>
 <a id="items.i,CXCursor"></a>
 <dt><pre><span class="Keyword">iterator</span> <a href="#items.i%2CCXCursor"><span class="Identifier">items</span></a><span class="Other">(</span><span class="Identifier">cursor</span><span class="Other">:</span> <a href="libclang.html#CXCursor"><span class="Identifier">CXCursor</span></a><span class="Other">)</span><span class="Other">:</span> <a href="libclang.html#CXCursor"><span class="Identifier">CXCursor</span></a> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
@@ -8174,7 +7988,7 @@ Create <tt class="docutils literal"><span class="pre">{.cdecl.}</span></tt> call
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2020-08-28 19:50:19 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2020-08-29 09:23:48 UTC</small>
       </div>
     </div>
   </div>
