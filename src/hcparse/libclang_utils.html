@@ -101,7 +101,9 @@ function main() {
       </select>
     </div>
     <ul class="simple simple-toc" id="toc-list">
-<li>
+<ul class="simple"><li><a class="reference" id="parameters_toc" href="#parameters">Parameters</a></li>
+<li><a class="reference" id="fields_toc" href="#fields">Fields</a></li>
+</ul><li>
   <a class="reference reference-toplevel" href="#6" id="56">Imports</a>
   <ul class="simple simple-toc-section">
     
@@ -110,7 +112,51 @@ function main() {
 <li>
   <a class="reference reference-toplevel" href="#7" id="57">Types</a>
   <ul class="simple simple-toc-section">
-      <li><a class="reference" href="#WrapConfig"
+      <li><a class="reference" href="#CDeclKind"
+    title="CDeclKind = enum
+  cdkClass, cdkStruct, cdkEnum, cdkFunction, cdkMethod, cdkField"><wbr />CDecl<wbr />Kind<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#CArg"
+    title="CArg = object
+  name*: string
+  cursor*: CXCursor"><wbr />CArg<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#CXOperatorKind"
+    title="CXOperatorKind = enum
+  cxoPrefixOp,                ## Prefix operator `@a`
+  cxoInfixOP,                 ## Infix operator `a @ b`
+  cxoAsgnOp,                  ## Assign operator `a = b`
+  cxoArrayOp,                 ## Array access operator `a[b]`
+  cxoArrowOp,                 ## Arrow operator `a-&gt;`
+  cxoCallOp                   ## Call operator `a()`"><wbr />CXOperator<wbr />Kind<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#CDecl"
+    title="CDecl = object
+  name*: string
+  namespace*: seq[string]
+  cursor {.requiresinit.}: CXCursor
+  case kind*: CDeclKind
+  of cdkField:
+      impl_fldAccs: CX_CXXAccessSpecifier
+
+  of cdkMethod:
+      impl_metAccs: CX_CXXAccessSpecifier
+      impl_metArgs: seq[CArg]
+
+  of cdkFunction:
+      impl_funArgs: seq[CArg]
+
+  of {cdkClass, cdkStruct}:
+      members*: seq[CDecl]
+
+  else:"><wbr />CDecl<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#CApiUnit"
+    title="CApiUnit = object
+  decls*: seq[CDecl]
+  publicAPI*: seq[CXCursor]"><wbr />CApi<wbr />Unit<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#CDepsTree"
+    title="CDepsTree = object
+  file*: string
+  name*: string
+  deps*: seq[CDepsTree]"><wbr />CDeps<wbr />Tree<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#WrapConfig"
     title="WrapConfig = object
   header*: string"><wbr />Wrap<wbr />Config<span class="attachedType"></span></a></li>
 
@@ -133,12 +179,23 @@ function main() {
     title="`$`(diag: CXDiagnostic): string"><wbr />`$`<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#createIndex%2Cbool%2Cbool"
     title="createIndex(excludeDeclarations: bool = false; showDiagnostics: bool = false): CXIndex"><wbr />create<wbr />Index<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#createDatabase%2Cstring"
+    title="createDatabase(directory: string): CXCompilationDatabase"><wbr />create<wbr />Database<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#getArgs%2CCXCompileCommand"
     title="getArgs(command: CXCompileCommand): seq[string]"><wbr />get<wbr />Args<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#%5B%5D%2CCXCompileCommands%2Cint"
+    title="`[]`(commands: CXCompileCommands; idx: int): CXCompileCommand"><wbr />`[]`<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#isNil%2CCXTranslationUnit"
     title="isNil(tu: CXTranslationUnit): bool"><wbr />is<wbr />Nil<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#getBuiltinHeaders"
     title="getBuiltinHeaders(): seq[string]"><wbr />get<wbr />Builtin<wbr />Headers<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#parseTranslationUnit%2CCXIndex%2Cstring%2Cseq%5Bstring%5D%2Cset%5BCXTranslationUnit_Flags%5D%2Cbool"
+    title="parseTranslationUnit(trIndex: CXIndex; filename: string;
+                     cmdline: seq[string] = @[]; trOptions: set[
+    CXTranslationUnit_Flags] = {tufSingleFileParse}; reparseOnNil: bool = true): CXTranslationUnit"><wbr />parse<wbr />Translation<wbr />Unit<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#parseTranslationUnit%2CCXIndex%2CCXCompileCommand%2Cseq%5Bstring%5D"
+    title="parseTranslationUnit(index: CXIndex; command: CXCompileCommand;
+                     extraFlags: seq[string] = @[]): CXTranslationUnit"><wbr />parse<wbr />Translation<wbr />Unit<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#toClientData%2CT"
     title="toClientData[T](val: var T): CXClientData"><wbr />to<wbr />Client<wbr />Data<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#toCursorVisitor%2CCXVisitor"
@@ -176,14 +233,20 @@ function main() {
   <li><a class="reference" href="#visitMainFile%2CCXCursor%2Ctuple%5BT%2Cproc%28CXCursor%2CCXCursor%2Cpointer%29%5D"
     title="visitMainFile[T](cursor: CXCursor; callback: tuple[data: T, impl: proc (a, b: CXCursor;
     clientData: pointer): CXChildVisitResult {.cdecl.}])"><wbr />visit<wbr />Main<wbr />File<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#getFirstOfKind%2CCXCursor%2Cset%5BCXCursorKind%5D%2Cbool"
+    title="getFirstOfKind(cursor: CXCursor; kindSet: set[CXCursorKind]; recurse: bool = true): CXCursor"><wbr />get<wbr />First<wbr />Of<wbr />Kind<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#isFromMainFile%2CCXCursor"
     title="isFromMainFile(cursor: CXCursor): bool"><wbr />is<wbr />From<wbr />Main<wbr />File<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#getSpellingLocation%2CCXCursor"
+    title="getSpellingLocation(cursor: CXCursor): tuple[file: string, line, column, offset: int]"><wbr />get<wbr />Spelling<wbr />Location<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#cxKind%2CCXComment"
     title="cxKind(comment: CXComment): CXCommentKind"><wbr />cx<wbr />Kind<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#%24%2CCXComment"
     title="`$`(comment: CXComment): string"><wbr />`$`<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#len%2CCXComment"
     title="len(comment: CXComment): int"><wbr />len<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#%5B%5D%2CCXComment%2Cint"
+    title="`[]`(comment: CXComment; idx: int): CXComment"><wbr />`[]`<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#objTreeRepr%2CCXComment"
     title="objTreeRepr(comment: CXComment): ObjTree"><wbr />obj<wbr />Tree<wbr />Repr<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#toNimDoc%2CCXComment"
@@ -200,6 +263,8 @@ function main() {
     title="retType(cursor: CXCursor): CXType"><wbr />ret<wbr />Type<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#argc%2CCXCursor"
     title="argc(cursor: CXCursor): int"><wbr />argc<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#nthArg%2CCXType%2Cint"
+    title="nthArg(cxtype: CXType; idx: int): CXType"><wbr />nth<wbr />Arg<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#fromElaboratedPType%2CCXType"
     title="fromElaboratedPType(cxtype: CXType): NType[PNode]"><wbr />from<wbr />Elaborated<wbr />PType<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#toNType%2CCXType"
@@ -208,14 +273,44 @@ function main() {
     title="objTreeRepr(cxtype: CXType): ObjTree"><wbr />obj<wbr />Tree<wbr />Repr<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#lispRepr%2CCXType"
     title="lispRepr(cxtype: CXType): string"><wbr />lisp<wbr />Repr<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#objTreeRepr%2CCXCursor%2CCXTranslationUnit"
+    title="objTreeRepr(cursor: CXCursor; tu: CXTranslationUnit): ObjTree"><wbr />obj<wbr />Tree<wbr />Repr<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#treeRepr%2CCXCursor%2CCXTranslationUnit"
     title="treeRepr(cursor: CXCursor; tu: CXTranslationUnit): string"><wbr />tree<wbr />Repr<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#accs%2CCDecl"
+    title="accs(self: CDecl): CX_CXXAccessSpecifier"><wbr />accs<span class="attachedType">CDecl</span></a></li>
+  <li><a class="reference" href="#accs%3D%2CCDecl%2CCX_CXXAccessSpecifier"
+    title="accs=(self: var CDecl; it: CX_CXXAccessSpecifier)"><wbr />accs=<span class="attachedType">CDecl</span></a></li>
+  <li><a class="reference" href="#args%2CCDecl"
+    title="args(self: CDecl): seq[CArg]"><wbr />args<span class="attachedType">CDecl</span></a></li>
+  <li><a class="reference" href="#args%3D%2CCDecl%2Cseq%5BCArg%5D"
+    title="args=(self: var CDecl; it: seq[CArg])"><wbr />args=<span class="attachedType">CDecl</span></a></li>
   <li><a class="reference" href="#dropPOD%2CCXType"
     title="dropPOD(cxtype: CXType): string"><wbr />drop<wbr />POD<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#toPIdentDefs%2CCXCursor"
     title="toPIdentDefs(cursor: CXCursor): PIdentDefs"><wbr />to<wbr />PIdent<wbr />Defs<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#convertCFunction%2CCXCursor"
     title="convertCFunction(cursor: CXCursor): ProcDecl[PNode]"><wbr />convert<wbr />CFunction<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#getPublicAPI%2CCDecl"
+    title="getPublicAPI(cd: CDecl): seq[CXCursor]"><wbr />get<wbr />Public<wbr />API<span class="attachedType">CDecl</span></a></li>
+  <li><a class="reference" href="#splitDeclarations%2CCXTranslationUnit"
+    title="splitDeclarations(tu: CXTranslationUnit): CApiUnit"><wbr />split<wbr />Declarations<span class="attachedType">CApiUnit</span></a></li>
+  <li><a class="reference" href="#getHCParseBinDir"
+    title="getHCParseBinDir(): string"><wbr />get<wbr />HCParse<wbr />Bin<wbr />Dir<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#getHCParseBinPath%2Cstring"
+    title="getHCParseBinPath(name: string): string"><wbr />get<wbr />HCParse<wbr />Bin<wbr />Path<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#parseBuildDepsTree%2Cstring"
+    title="parseBuildDepsTree(outs: string): CDepsTree"><wbr />parse<wbr />Build<wbr />Deps<wbr />Tree<span class="attachedType">CDepsTree</span></a></li>
+  <li><a class="reference" href="#buildDepsTree%2Cstring%2Cseq%5Bstring%5D"
+    title="buildDepsTree(file: string; args: seq[string]): CDepsTree"><wbr />build<wbr />Deps<wbr />Tree<span class="attachedType">CDepsTree</span></a></li>
+  <li><a class="reference" href="#immediateDeps%2CCDepsTree"
+    title="immediateDeps(d: CDepsTree): seq[string]"><wbr />immediate<wbr />Deps<span class="attachedType">CDepsTree</span></a></li>
+  <li><a class="reference" href="#getDepFiles%2Cseq%5BCXCursor%5D"
+    title="getDepFiles(deps: seq[CXCursor]): seq[string]"><wbr />get<wbr />Dep<wbr />Files<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#wrapMethods%2CCDecl%2CWrapConfig%2CNType%5BPNode%5D"
+    title="wrapMethods(cd: CDecl; conf: WrapConfig; parent: NType[PNode]): seq[PProcDecl]"><wbr />wrap<wbr />Methods<span class="attachedType">CDecl</span></a></li>
+  <li><a class="reference" href="#wrapObject%2CCDecl%2CWrapConfig"
+    title="wrapObject(cd: CDecl; conf: WrapConfig): tuple[obj: PObject, procs: seq[PProcDecl]]"><wbr />wrap<wbr />Object<span class="attachedType">CDecl</span></a></li>
 
   </ul>
 </li>
@@ -229,13 +324,21 @@ function main() {
   <li><a class="reference" href="#dropEmptyLines%2Cstring_2"
     title="dropEmptyLines(str: var string): void"><wbr />drop<wbr />Empty<wbr />Lines<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#arg%2CCDecl%2Cint"
-    title="arg(cd: CDecl; idx: int): CArg"><wbr />arg<span class="attachedType"></span></a></li>
+    title="arg(cd: CDecl; idx: int): CArg"><wbr />arg<span class="attachedType">CDecl</span></a></li>
   <li><a class="reference" href="#member%2CCDecl%2Cint"
-    title="member(cd: CDecl; idx: int): CDecl"><wbr />member<span class="attachedType"></span></a></li>
+    title="member(cd: CDecl; idx: int): CDecl"><wbr />member<span class="attachedType">CDecl</span></a></li>
+  <li><a class="reference" href="#methods%2CCDecl%2Cset%5BCXCursorKind%5D"
+    title="methods(cd: CDecl; kinds: set[CXCursorKind]): seq[CDecl]"><wbr />methods<span class="attachedType">CDecl</span></a></li>
+  <li><a class="reference" href="#pubFields%2CCDecl"
+    title="pubFields(cd: CDecl): seq[CDecl]"><wbr />pub<wbr />Fields<span class="attachedType">CDecl</span></a></li>
   <li><a class="reference" href="#namespaceName%2CCDecl"
-    title="namespaceName(cd: CDecl): string"><wbr />namespace<wbr />Name<span class="attachedType"></span></a></li>
+    title="namespaceName(cd: CDecl): string"><wbr />namespace<wbr />Name<span class="attachedType">CDecl</span></a></li>
+  <li><a class="reference" href="#isOperator%2CCDecl"
+    title="isOperator(cd: CDecl): bool"><wbr />is<wbr />Operator<span class="attachedType">CDecl</span></a></li>
+  <li><a class="reference" href="#classifyOperator%2CCDecl"
+    title="classifyOperator(cd: CDecl): CXOperatorKind"><wbr />classify<wbr />Operator<span class="attachedType">CDecl</span></a></li>
   <li><a class="reference" href="#getNimName%2CCDecl"
-    title="getNimName(cd: CDecl): string"><wbr />get<wbr />Nim<wbr />Name<span class="attachedType"></span></a></li>
+    title="getNimName(cd: CDecl): string"><wbr />get<wbr />Nim<wbr />Name<span class="attachedType">CDecl</span></a></li>
 
   </ul>
 </li>
@@ -274,6 +377,89 @@ function main() {
 <div class="section" id="7">
 <h1><a class="toc-backref" href="#7">Types</a></h1>
 <dl class="item">
+<a id="CDeclKind"></a>
+<dt><pre><a href="libclang_utils.html#CDeclKind"><span class="Identifier">CDeclKind</span></a> <span class="Other">=</span> <span class="Keyword">enum</span>
+  <span class="Identifier">cdkClass</span><span class="Other">,</span> <span class="Identifier">cdkStruct</span><span class="Other">,</span> <span class="Identifier">cdkEnum</span><span class="Other">,</span> <span class="Identifier">cdkFunction</span><span class="Other">,</span> <span class="Identifier">cdkMethod</span><span class="Other">,</span> <span class="Identifier">cdkField</span></pre></dt>
+<dd>
+
+
+
+</dd>
+<a id="CArg"></a>
+<dt><pre><a href="libclang_utils.html#CArg"><span class="Identifier">CArg</span></a> <span class="Other">=</span> <span class="Keyword">object</span>
+  <span class="Identifier">name</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
+  <span class="Identifier">cursor</span><span class="Operator">*</span><span class="Other">:</span> <a href="libclang.html#CXCursor"><span class="Identifier">CXCursor</span></a>
+</pre></dt>
+<dd>
+
+
+
+</dd>
+<a id="CXOperatorKind"></a>
+<dt><pre><a href="libclang_utils.html#CXOperatorKind"><span class="Identifier">CXOperatorKind</span></a> <span class="Other">=</span> <span class="Keyword">enum</span>
+  <span class="Identifier">cxoPrefixOp</span><span class="Other">,</span>                <span class="Comment">## Prefix operator `@a`</span>
+  <span class="Identifier">cxoInfixOP</span><span class="Other">,</span>                 <span class="Comment">## Infix operator `a @ b`</span>
+  <span class="Identifier">cxoAsgnOp</span><span class="Other">,</span>                  <span class="Comment">## Assign operator `a = b`</span>
+  <span class="Identifier">cxoArrayOp</span><span class="Other">,</span>                 <span class="Comment">## Array access operator `a[b]`</span>
+  <span class="Identifier">cxoArrowOp</span><span class="Other">,</span>                 <span class="Comment">## Arrow operator `a-&gt;`</span>
+  <span class="Identifier">cxoCallOp</span>                   <span class="Comment">## Call operator `a()`</span></pre></dt>
+<dd>
+
+
+
+</dd>
+<a id="CDecl"></a>
+<dt><pre><a href="libclang_utils.html#CDecl"><span class="Identifier">CDecl</span></a> <span class="Other">=</span> <span class="Keyword">object</span>
+  <span class="Identifier">name</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
+  <span class="Identifier">namespace</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span>
+  <span class="Identifier">cursor</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">requiresinit</span></span><span class="Other">.}</span></span><span class="Other">:</span> <a href="libclang.html#CXCursor"><span class="Identifier">CXCursor</span></a>
+  <span class="Keyword">case</span> <span class="Identifier">kind</span><span class="Operator">*</span><span class="Other">:</span> <a href="libclang_utils.html#CDeclKind"><span class="Identifier">CDeclKind</span></a>
+  <span class="Keyword">of</span> <span class="Identifier">cdkField</span><span class="Other">:</span>
+      <span class="Identifier">impl_fldAccs</span><span class="Other">:</span> <a href="libclang.html#CX_CXXAccessSpecifier"><span class="Identifier">CX_CXXAccessSpecifier</span></a>
+
+  <span class="Keyword">of</span> <span class="Identifier">cdkMethod</span><span class="Other">:</span>
+      <span class="Identifier">impl_metAccs</span><span class="Other">:</span> <a href="libclang.html#CX_CXXAccessSpecifier"><span class="Identifier">CX_CXXAccessSpecifier</span></a>
+      <span class="Identifier">impl_metArgs</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><a href="libclang_utils.html#CArg"><span class="Identifier">CArg</span></a><span class="Other">]</span>
+
+  <span class="Keyword">of</span> <span class="Identifier">cdkFunction</span><span class="Other">:</span>
+      <span class="Identifier">impl_funArgs</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><a href="libclang_utils.html#CArg"><span class="Identifier">CArg</span></a><span class="Other">]</span>
+
+  <span class="Keyword">of</span> <span class="Other">{</span><span class="Identifier">cdkClass</span><span class="Other">,</span> <span class="Identifier">cdkStruct</span><span class="Other">}</span><span class="Other">:</span>
+      <span class="Identifier">members</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><a href="libclang_utils.html#CDecl"><span class="Identifier">CDecl</span></a><span class="Other">]</span>
+
+  <span class="Keyword">else</span><span class="Other">:</span>
+    
+  </pre></dt>
+<dd>
+
+
+
+</dd>
+<a id="CApiUnit"></a>
+<dt><pre><a href="libclang_utils.html#CApiUnit"><span class="Identifier">CApiUnit</span></a> <span class="Other">=</span> <span class="Keyword">object</span>
+  <span class="Identifier">decls</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><a href="libclang_utils.html#CDecl"><span class="Identifier">CDecl</span></a><span class="Other">]</span>
+  <span class="Identifier">publicAPI</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><a href="libclang.html#CXCursor"><span class="Identifier">CXCursor</span></a><span class="Other">]</span>
+</pre></dt>
+<dd>
+
+Representation of single API unit - all public methods/classes/fields/functions declared in main file of single translation unit.
+<h2><a class="toc-backref" id="fields" href="#fields">Fields</a></h2><table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">decls:</th><td> List of declarations in main file</td></tr>
+<tr><th class="docinfo-name">publicTypes:</th><td> List of public entries exposed by the API.<p>Class fields, function/method arguments/return values and so on. This list allows you to determine whether or not wrapping additional API unit &amp; including them in main file is necessary.</p>
+</td></tr>
+</tbody></table>
+
+</dd>
+<a id="CDepsTree"></a>
+<dt><pre><a href="libclang_utils.html#CDepsTree"><span class="Identifier">CDepsTree</span></a> <span class="Other">=</span> <span class="Keyword">object</span>
+  <span class="Identifier">file</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
+  <span class="Identifier">name</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
+  <span class="Identifier">deps</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><a href="libclang_utils.html#CDepsTree"><span class="Identifier">CDepsTree</span></a><span class="Other">]</span>
+</pre></dt>
+<dd>
+
+
+
+</dd>
 <a id="WrapConfig"></a>
 <dt><pre><a href="libclang_utils.html#WrapConfig"><span class="Identifier">WrapConfig</span></a> <span class="Other">=</span> <span class="Keyword">object</span>
   <span class="Identifier">header</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">string</span>
@@ -338,11 +524,27 @@ function main() {
 
 
 </dd>
+<a id="createDatabase,string"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#createDatabase%2Cstring"><span class="Identifier">createDatabase</span></a><span class="Other">(</span><span class="Identifier">directory</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <a href="libclang.html#CXCompilationDatabase"><span class="Identifier">CXCompilationDatabase</span></a> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">IOError</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Create compilation database from database found in directory <tt class="docutils literal"><span class="pre">directory</span></tt>. On failure <tt class="docutils literal"><span class="pre">IOError</span></tt> is raised.
+
+</dd>
 <a id="getArgs,CXCompileCommand"></a>
 <dt><pre><span class="Keyword">proc</span> <a href="#getArgs%2CCXCompileCommand"><span class="Identifier">getArgs</span></a><span class="Other">(</span><span class="Identifier">command</span><span class="Other">:</span> <a href="libclang.html#CXCompileCommand"><span class="Identifier">CXCompileCommand</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 Get arguments for compile command <tt class="docutils literal"><span class="pre">command</span></tt>
+
+</dd>
+<a id="[],CXCompileCommands,int"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#%5B%5D%2CCXCompileCommands%2Cint"><span class="Identifier">`[]`</span></a><span class="Other">(</span><span class="Identifier">commands</span><span class="Other">:</span> <a href="libclang.html#CXCompileCommands"><span class="Identifier">CXCompileCommands</span></a><span class="Other">;</span> <span class="Identifier">idx</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span><span class="Other">:</span> <a href="libclang.html#CXCompileCommand"><span class="Identifier">CXCompileCommand</span></a> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+
 
 </dd>
 <a id="isNil,CXTranslationUnit"></a>
@@ -353,12 +555,36 @@ Get arguments for compile command <tt class="docutils literal"><span class="pre"
 
 </dd>
 <a id="getBuiltinHeaders"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#getBuiltinHeaders"><span class="Identifier">getBuiltinHeaders</span></a><span class="Other">(</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <a href="#getBuiltinHeaders"><span class="Identifier">getBuiltinHeaders</span></a><span class="Other">(</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 <p>According to clang <a class="reference external" href="https://clang.llvm.org/docs/LibTooling.html#builtin-includes">documentation</a> libclang is needs additional precompiled headers paths in addition to default include.</p>
 <p>NOTE right now I have zero idea how it works on windows, so I will just hardcode unix-like paths.</p>
 
+
+</dd>
+<a id="parseTranslationUnit,CXIndex,string,seq[string],set[CXTranslationUnit_Flags],bool"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#parseTranslationUnit%2CCXIndex%2Cstring%2Cseq%5Bstring%5D%2Cset%5BCXTranslationUnit_Flags%5D%2Cbool"><span class="Identifier">parseTranslationUnit</span></a><span class="Other">(</span><span class="Identifier">trIndex</span><span class="Other">:</span> <a href="libclang.html#CXIndex"><span class="Identifier">CXIndex</span></a><span class="Other">;</span> <span class="Identifier">filename</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span>
+                         <span class="Identifier">cmdline</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other">=</span> <span class="Operator">@</span><span class="Other">[</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">trOptions</span><span class="Other">:</span> <span class="Identifier">set</span><span class="Other">[</span>
+    <a href="libclang.html#CXTranslationUnit_Flags"><span class="Identifier">CXTranslationUnit_Flags</span></a><span class="Other">]</span> <span class="Other">=</span> <span class="Other">{</span><span class="Identifier">tufSingleFileParse</span><span class="Other">}</span><span class="Other">;</span> <span class="Identifier">reparseOnNil</span><span class="Other">:</span> <span class="Identifier">bool</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">)</span><span class="Other">:</span> <a href="libclang.html#CXTranslationUnit"><span class="Identifier">CXTranslationUnit</span></a> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">,</span> <span class="Identifier">AssertionError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+
+
+</dd>
+<a id="parseTranslationUnit,CXIndex,CXCompileCommand,seq[string]"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#parseTranslationUnit%2CCXIndex%2CCXCompileCommand%2Cseq%5Bstring%5D"><span class="Identifier">parseTranslationUnit</span></a><span class="Other">(</span><span class="Identifier">index</span><span class="Other">:</span> <a href="libclang.html#CXIndex"><span class="Identifier">CXIndex</span></a><span class="Other">;</span> <span class="Identifier">command</span><span class="Other">:</span> <a href="libclang.html#CXCompileCommand"><span class="Identifier">CXCompileCommand</span></a><span class="Other">;</span>
+                         <span class="Identifier">extraFlags</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other">=</span> <span class="Operator">@</span><span class="Other">[</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <a href="libclang.html#CXTranslationUnit"><span class="Identifier">CXTranslationUnit</span></a> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">,</span> <span class="Identifier">AssertionError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Get file and compilation flags from compilation command <tt class="docutils literal"><span class="pre">command</span></tt> and parse translation unit.
+<h2><a class="toc-backref" id="parameters" href="#parameters">Parameters</a></h2><table class="docinfo" frame="void" rules="none"><col class="docinfo-name" /><col class="docinfo-content" /><tbody valign="top"><tr><th class="docinfo-name">index:</th><td> compilation index</td></tr>
+<tr><th class="docinfo-name">command:</th><td> Compilation command from database</td></tr>
+<tr><th class="docinfo-name">extraFlags:</th><td> Additional compilation flags for compiler. When parsing<p>c++ header files with <tt class="docutils literal"><span class="pre">.h</span></tt> extension you are most likely need to use <tt class="docutils literal"><span class="pre">@[&quot;-xc++&quot;]</span></tt> to make clang correctly recognize the language.</p>
+</td></tr>
+</tbody></table>
 
 </dd>
 <a id="toClientData,T"></a>
@@ -411,8 +637,8 @@ Get kind of cursor
 
 </dd>
 <a id="expectKind,CXCursor,CXCursorKind"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#expectKind%2CCXCursor%2CCXCursorKind"><span class="Identifier">expectKind</span></a><span class="Other">(</span><span class="Identifier">cursor</span><span class="Other">:</span> <a href="libclang.html#CXCursor"><span class="Identifier">CXCursor</span></a><span class="Other">;</span> <span class="Identifier">kind</span><span class="Other">:</span> <a href="libclang.html#CXCursorKind"><span class="Identifier">CXCursorKind</span></a><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">AssertionError</span><span class="Other">]</span><span class="Other">,</span>
-    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <a href="#expectKind%2CCXCursor%2CCXCursorKind"><span class="Identifier">expectKind</span></a><span class="Other">(</span><span class="Identifier">cursor</span><span class="Other">:</span> <a href="libclang.html#CXCursor"><span class="Identifier">CXCursor</span></a><span class="Other">;</span> <span class="Identifier">kind</span><span class="Other">:</span> <a href="libclang.html#CXCursorKind"><span class="Identifier">CXCursorKind</span></a><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">AssertionError</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 Raise assertion if cursor kind does not match
@@ -420,7 +646,7 @@ Raise assertion if cursor kind does not match
 </dd>
 <a id="expectKind,CXCursor,set[CXCursorKind]"></a>
 <dt><pre><span class="Keyword">proc</span> <a href="#expectKind%2CCXCursor%2Cset%5BCXCursorKind%5D"><span class="Identifier">expectKind</span></a><span class="Other">(</span><span class="Identifier">cursor</span><span class="Other">:</span> <a href="libclang.html#CXCursor"><span class="Identifier">CXCursor</span></a><span class="Other">;</span> <span class="Identifier">kind</span><span class="Other">:</span> <span class="Identifier">set</span><span class="Other">[</span><a href="libclang.html#CXCursorKind"><span class="Identifier">CXCursorKind</span></a><span class="Other">]</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">AssertionError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">AssertionError</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 Raise assertion if cursor kind is not in set
@@ -448,29 +674,31 @@ Return true if cursor is a class method with <tt class="docutils literal"><span 
 
 </dd>
 <a id="children,CXCursor"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#children%2CCXCursor"><span class="Identifier">children</span></a><span class="Other">(</span><span class="Identifier">cursor</span><span class="Other">:</span> <a href="libclang.html#CXCursor"><span class="Identifier">CXCursor</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><a href="libclang.html#CXCursor"><span class="Identifier">CXCursor</span></a><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <a href="#children%2CCXCursor"><span class="Identifier">children</span></a><span class="Other">(</span><span class="Identifier">cursor</span><span class="Other">:</span> <a href="libclang.html#CXCursor"><span class="Identifier">CXCursor</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><a href="libclang.html#CXCursor"><span class="Identifier">CXCursor</span></a><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 Get sequence of subnodes for cursor
 
 </dd>
 <a id="children,CXCursor,set[CXCursorKind]"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#children%2CCXCursor%2Cset%5BCXCursorKind%5D"><span class="Identifier">children</span></a><span class="Other">(</span><span class="Identifier">cursor</span><span class="Other">:</span> <a href="libclang.html#CXCursor"><span class="Identifier">CXCursor</span></a><span class="Other">;</span> <span class="Identifier">kind</span><span class="Other">:</span> <span class="Identifier">set</span><span class="Other">[</span><a href="libclang.html#CXCursorKind"><span class="Identifier">CXCursorKind</span></a><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><a href="libclang.html#CXCursor"><span class="Identifier">CXCursor</span></a><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
-    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <a href="#children%2CCXCursor%2Cset%5BCXCursorKind%5D"><span class="Identifier">children</span></a><span class="Other">(</span><span class="Identifier">cursor</span><span class="Other">:</span> <a href="libclang.html#CXCursor"><span class="Identifier">CXCursor</span></a><span class="Other">;</span> <span class="Identifier">kind</span><span class="Other">:</span> <span class="Identifier">set</span><span class="Other">[</span><a href="libclang.html#CXCursorKind"><span class="Identifier">CXCursorKind</span></a><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><a href="libclang.html#CXCursor"><span class="Identifier">CXCursor</span></a><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 
 
 </dd>
 <a id="[],CXCursor,int"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#%5B%5D%2CCXCursor%2Cint"><span class="Identifier">`[]`</span></a><span class="Other">(</span><span class="Identifier">cursor</span><span class="Other">:</span> <a href="libclang.html#CXCursor"><span class="Identifier">CXCursor</span></a><span class="Other">;</span> <span class="Identifier">idx</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span><span class="Other">:</span> <a href="libclang.html#CXCursor"><span class="Identifier">CXCursor</span></a> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">IndexError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <a href="#%5B%5D%2CCXCursor%2Cint"><span class="Identifier">`[]`</span></a><span class="Other">(</span><span class="Identifier">cursor</span><span class="Other">:</span> <a href="libclang.html#CXCursor"><span class="Identifier">CXCursor</span></a><span class="Other">;</span> <span class="Identifier">idx</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span><span class="Other">:</span> <a href="libclang.html#CXCursor"><span class="Identifier">CXCursor</span></a> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">IndexError</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 Get <tt class="docutils literal"><span class="pre">idx</span></tt>'th subnode of cursor. If index is greater than number of available subnodes <tt class="docutils literal"><span class="pre">IndexError</span></tt> is raised.
 
 </dd>
 <a id="len,CXCursor"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#len%2CCXCursor"><span class="Identifier">len</span></a><span class="Other">(</span><span class="Identifier">cursor</span><span class="Other">:</span> <a href="libclang.html#CXCursor"><span class="Identifier">CXCursor</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <a href="#len%2CCXCursor"><span class="Identifier">len</span></a><span class="Other">(</span><span class="Identifier">cursor</span><span class="Other">:</span> <a href="libclang.html#CXCursor"><span class="Identifier">CXCursor</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 Get number of subnodes in cursor
@@ -491,11 +719,28 @@ Get sequence of tokens that make up cursor.
 Call visitor in each subnode if it is in main file
 
 </dd>
+<a id="getFirstOfKind,CXCursor,set[CXCursorKind],bool"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#getFirstOfKind%2CCXCursor%2Cset%5BCXCursorKind%5D%2Cbool"><span class="Identifier">getFirstOfKind</span></a><span class="Other">(</span><span class="Identifier">cursor</span><span class="Other">:</span> <a href="libclang.html#CXCursor"><span class="Identifier">CXCursor</span></a><span class="Other">;</span> <span class="Identifier">kindSet</span><span class="Other">:</span> <span class="Identifier">set</span><span class="Other">[</span><a href="libclang.html#CXCursorKind"><span class="Identifier">CXCursorKind</span></a><span class="Other">]</span><span class="Other">;</span>
+                   <span class="Identifier">recurse</span><span class="Other">:</span> <span class="Identifier">bool</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">)</span><span class="Other">:</span> <a href="libclang.html#CXCursor"><span class="Identifier">CXCursor</span></a> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">KeyError</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+
+
+</dd>
 <a id="isFromMainFile,CXCursor"></a>
 <dt><pre><span class="Keyword">proc</span> <a href="#isFromMainFile%2CCXCursor"><span class="Identifier">isFromMainFile</span></a><span class="Other">(</span><span class="Identifier">cursor</span><span class="Other">:</span> <a href="libclang.html#CXCursor"><span class="Identifier">CXCursor</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 Return true if cursor posints to main file
+
+</dd>
+<a id="getSpellingLocation,CXCursor"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#getSpellingLocation%2CCXCursor"><span class="Identifier">getSpellingLocation</span></a><span class="Other">(</span><span class="Identifier">cursor</span><span class="Other">:</span> <a href="libclang.html#CXCursor"><span class="Identifier">CXCursor</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Keyword">tuple</span><span class="Other">[</span><span class="Identifier">file</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">,</span>
+    <span class="Identifier">line</span><span class="Other">,</span> <span class="Identifier">column</span><span class="Other">,</span> <span class="Identifier">offset</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+
 
 </dd>
 <a id="cxKind,CXComment"></a>
@@ -517,6 +762,13 @@ Get original representation of the comment. NOTE: it seems like libclang API doe
 <dd>
 
 Get number of subnodes for comment
+
+</dd>
+<a id="[],CXComment,int"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#%5B%5D%2CCXComment%2Cint"><span class="Identifier">`[]`</span></a><span class="Other">(</span><span class="Identifier">comment</span><span class="Other">:</span> <a href="libclang.html#CXComment"><span class="Identifier">CXComment</span></a><span class="Other">;</span> <span class="Identifier">idx</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span><span class="Other">:</span> <a href="libclang.html#CXComment"><span class="Identifier">CXComment</span></a> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Get <tt class="docutils literal"><span class="pre">idx</span></tt>'th subnode of comment
 
 </dd>
 <a id="objTreeRepr,CXComment"></a>
@@ -542,14 +794,15 @@ Get type kind
 
 </dd>
 <a id="expectKind,CXType,CXTypeKind"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#expectKind%2CCXType%2CCXTypeKind"><span class="Identifier">expectKind</span></a><span class="Other">(</span><span class="Identifier">cxtype</span><span class="Other">:</span> <a href="libclang.html#CXType"><span class="Identifier">CXType</span></a><span class="Other">;</span> <span class="Identifier">kind</span><span class="Other">:</span> <a href="libclang.html#CXTypeKind"><span class="Identifier">CXTypeKind</span></a><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">AssertionError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <a href="#expectKind%2CCXType%2CCXTypeKind"><span class="Identifier">expectKind</span></a><span class="Other">(</span><span class="Identifier">cxtype</span><span class="Other">:</span> <a href="libclang.html#CXType"><span class="Identifier">CXType</span></a><span class="Other">;</span> <span class="Identifier">kind</span><span class="Other">:</span> <a href="libclang.html#CXTypeKind"><span class="Identifier">CXTypeKind</span></a><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">AssertionError</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 Raise assertion if cursor kind does not match
 
 </dd>
 <a id="argc,CXType"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#argc%2CCXType"><span class="Identifier">argc</span></a><span class="Other">(</span><span class="Identifier">cxtype</span><span class="Other">:</span> <a href="libclang.html#CXType"><span class="Identifier">CXType</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">AssertionError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <a href="#argc%2CCXType"><span class="Identifier">argc</span></a><span class="Other">(</span><span class="Identifier">cxtype</span><span class="Other">:</span> <a href="libclang.html#CXType"><span class="Identifier">CXType</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">AssertionError</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 Get numbler of arguments in function type
@@ -563,17 +816,25 @@ Get numbler of arguments in function type
 
 </dd>
 <a id="retType,CXCursor"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#retType%2CCXCursor"><span class="Identifier">retType</span></a><span class="Other">(</span><span class="Identifier">cursor</span><span class="Other">:</span> <a href="libclang.html#CXCursor"><span class="Identifier">CXCursor</span></a><span class="Other">)</span><span class="Other">:</span> <a href="libclang.html#CXType"><span class="Identifier">CXType</span></a> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">AssertionError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <a href="#retType%2CCXCursor"><span class="Identifier">retType</span></a><span class="Other">(</span><span class="Identifier">cursor</span><span class="Other">:</span> <a href="libclang.html#CXCursor"><span class="Identifier">CXCursor</span></a><span class="Other">)</span><span class="Other">:</span> <a href="libclang.html#CXType"><span class="Identifier">CXType</span></a> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">AssertionError</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 
 
 </dd>
 <a id="argc,CXCursor"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#argc%2CCXCursor"><span class="Identifier">argc</span></a><span class="Other">(</span><span class="Identifier">cursor</span><span class="Other">:</span> <a href="libclang.html#CXCursor"><span class="Identifier">CXCursor</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">AssertionError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <a href="#argc%2CCXCursor"><span class="Identifier">argc</span></a><span class="Other">(</span><span class="Identifier">cursor</span><span class="Other">:</span> <a href="libclang.html#CXCursor"><span class="Identifier">CXCursor</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">AssertionError</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 Get number of arguments in cursor pointing to function
+
+</dd>
+<a id="nthArg,CXType,int"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#nthArg%2CCXType%2Cint"><span class="Identifier">nthArg</span></a><span class="Other">(</span><span class="Identifier">cxtype</span><span class="Other">:</span> <a href="libclang.html#CXType"><span class="Identifier">CXType</span></a><span class="Other">;</span> <span class="Identifier">idx</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span><span class="Other">:</span> <a href="libclang.html#CXType"><span class="Identifier">CXType</span></a> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">AssertionError</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Retrieve type nth argument of function type
 
 </dd>
 <a id="fromElaboratedPType,CXType"></a>
@@ -615,12 +876,49 @@ Convert CXType to nim type. Due to differences in how mutability handled in nim 
 
 
 </dd>
+<a id="objTreeRepr,CXCursor,CXTranslationUnit"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#objTreeRepr%2CCXCursor%2CCXTranslationUnit"><span class="Identifier">objTreeRepr</span></a><span class="Other">(</span><span class="Identifier">cursor</span><span class="Other">:</span> <a href="libclang.html#CXCursor"><span class="Identifier">CXCursor</span></a><span class="Other">;</span> <span class="Identifier">tu</span><span class="Other">:</span> <a href="libclang.html#CXTranslationUnit"><span class="Identifier">CXTranslationUnit</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">ObjTree</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Generate ObjTree representation of cursor
+
+</dd>
 <a id="treeRepr,CXCursor,CXTranslationUnit"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#treeRepr%2CCXCursor%2CCXTranslationUnit"><span class="Identifier">treeRepr</span></a><span class="Other">(</span><span class="Identifier">cursor</span><span class="Other">:</span> <a href="libclang.html#CXCursor"><span class="Identifier">CXCursor</span></a><span class="Other">;</span> <span class="Identifier">tu</span><span class="Other">:</span> <a href="libclang.html#CXTranslationUnit"><span class="Identifier">CXTranslationUnit</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span>
-    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <a href="#treeRepr%2CCXCursor%2CCXTranslationUnit"><span class="Identifier">treeRepr</span></a><span class="Other">(</span><span class="Identifier">cursor</span><span class="Other">:</span> <a href="libclang.html#CXCursor"><span class="Identifier">CXCursor</span></a><span class="Other">;</span> <span class="Identifier">tu</span><span class="Other">:</span> <a href="libclang.html#CXTranslationUnit"><span class="Identifier">CXTranslationUnit</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">,</span> <span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 Generate pretty-printed tree representation of cursor.
+
+</dd>
+<a id="accs,CDecl"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#accs%2CCDecl"><span class="Identifier">accs</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="libclang_utils.html#CDecl"><span class="Identifier">CDecl</span></a><span class="Other">)</span><span class="Other">:</span> <a href="libclang.html#CX_CXXAccessSpecifier"><span class="Identifier">CX_CXXAccessSpecifier</span></a> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">AssertionError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+
+
+</dd>
+<a id="accs=,CDecl,CX_CXXAccessSpecifier"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#accs%3D%2CCDecl%2CCX_CXXAccessSpecifier"><span class="Identifier">accs=</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="libclang_utils.html#CDecl"><span class="Identifier">CDecl</span></a><span class="Other">;</span> <span class="Identifier">it</span><span class="Other">:</span> <a href="libclang.html#CX_CXXAccessSpecifier"><span class="Identifier">CX_CXXAccessSpecifier</span></a><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">AssertionError</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+
+
+</dd>
+<a id="args,CDecl"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#args%2CCDecl"><span class="Identifier">args</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <a href="libclang_utils.html#CDecl"><span class="Identifier">CDecl</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><a href="libclang_utils.html#CArg"><span class="Identifier">CArg</span></a><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">AssertionError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+
+
+</dd>
+<a id="args=,CDecl,seq[CArg]"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#args%3D%2CCDecl%2Cseq%5BCArg%5D"><span class="Identifier">args=</span></a><span class="Other">(</span><span class="Identifier">self</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="libclang_utils.html#CDecl"><span class="Identifier">CDecl</span></a><span class="Other">;</span> <span class="Identifier">it</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><a href="libclang_utils.html#CArg"><span class="Identifier">CArg</span></a><span class="Other">]</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">AssertionError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+
 
 </dd>
 <a id="dropPOD,CXType"></a>
@@ -639,7 +937,83 @@ Generate pretty-printed tree representation of cursor.
 </dd>
 <a id="convertCFunction,CXCursor"></a>
 <dt><pre><span class="Keyword">proc</span> <a href="#convertCFunction%2CCXCursor"><span class="Identifier">convertCFunction</span></a><span class="Other">(</span><span class="Identifier">cursor</span><span class="Other">:</span> <a href="libclang.html#CXCursor"><span class="Identifier">CXCursor</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">ProcDecl</span><span class="Other">[</span><span class="Identifier">PNode</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">AssertionError</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">,</span> <span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+
+
+</dd>
+<a id="getPublicAPI,CDecl"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#getPublicAPI%2CCDecl"><span class="Identifier">getPublicAPI</span></a><span class="Other">(</span><span class="Identifier">cd</span><span class="Other">:</span> <a href="libclang_utils.html#CDecl"><span class="Identifier">CDecl</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><a href="libclang.html#CXCursor"><span class="Identifier">CXCursor</span></a><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">AssertionError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Get list of cursors referring to parts of the public API for a declaration: return and argument types for functions and methods, public fields for objects.
+
+</dd>
+<a id="splitDeclarations,CXTranslationUnit"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#splitDeclarations%2CCXTranslationUnit"><span class="Identifier">splitDeclarations</span></a><span class="Other">(</span><span class="Identifier">tu</span><span class="Other">:</span> <a href="libclang.html#CXTranslationUnit"><span class="Identifier">CXTranslationUnit</span></a><span class="Other">)</span><span class="Other">:</span> <a href="libclang_utils.html#CApiUnit"><span class="Identifier">CApiUnit</span></a> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Convert main file of translation unit into flattened sequence of high-level declarations. All cursors for objects/structs are retained. Public API elements are stored in <tt class="docutils literal"><span class="pre">publicAPI</span></tt> field
+
+</dd>
+<a id="getHCParseBinDir"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#getHCParseBinDir"><span class="Identifier">getHCParseBinDir</span></a><span class="Other">(</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">IOError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ReadDirEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Return absolute path <tt class="docutils literal"><span class="pre">/bin</span></tt> directory with helper cmdline tools; NOTE right now I have no idea how to handle dependencies like this - this is just a hacky solution.
+
+</dd>
+<a id="getHCParseBinPath,string"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#getHCParseBinPath%2Cstring"><span class="Identifier">getHCParseBinPath</span></a><span class="Other">(</span><span class="Identifier">name</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">IOError</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ReadDirEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Return absolute name of the helper cmdline tool <tt class="docutils literal"><span class="pre">name</span></tt>
+
+</dd>
+<a id="parseBuildDepsTree,string"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#parseBuildDepsTree%2Cstring"><span class="Identifier">parseBuildDepsTree</span></a><span class="Other">(</span><span class="Identifier">outs</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <a href="libclang_utils.html#CDepsTree"><span class="Identifier">CDepsTree</span></a> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RegexError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+
+
+</dd>
+<a id="buildDepsTree,string,seq[string]"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#buildDepsTree%2Cstring%2Cseq%5Bstring%5D"><span class="Identifier">buildDepsTree</span></a><span class="Other">(</span><span class="Identifier">file</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">args</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <a href="libclang_utils.html#CDepsTree"><span class="Identifier">CDepsTree</span></a> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">IOError</span><span class="Other">,</span>
+    <span class="Identifier">OSError</span><span class="Other">,</span> <span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">Defect</span><span class="Other">,</span> <span class="Identifier">IOError</span><span class="Other">,</span> <span class="Identifier">RegexError</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ReadDirEffect</span><span class="Other">,</span>
+    <span class="Identifier">ExecIOEffect</span><span class="Other">,</span> <span class="Identifier">ReadEnvEffect</span><span class="Other">,</span> <span class="Identifier">RootEffect</span><span class="Other">,</span> <span class="Identifier">ReadIOEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+
+
+</dd>
+<a id="immediateDeps,CDepsTree"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#immediateDeps%2CCDepsTree"><span class="Identifier">immediateDeps</span></a><span class="Other">(</span><span class="Identifier">d</span><span class="Other">:</span> <a href="libclang_utils.html#CDepsTree"><span class="Identifier">CDepsTree</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+
+
+</dd>
+<a id="getDepFiles,seq[CXCursor]"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#getDepFiles%2Cseq%5BCXCursor%5D"><span class="Identifier">getDepFiles</span></a><span class="Other">(</span><span class="Identifier">deps</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><a href="libclang.html#CXCursor"><span class="Identifier">CXCursor</span></a><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Generate list of files that have to be wrapped
+
+</dd>
+<a id="wrapMethods,CDecl,WrapConfig,NType[PNode]"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#wrapMethods%2CCDecl%2CWrapConfig%2CNType%5BPNode%5D"><span class="Identifier">wrapMethods</span></a><span class="Other">(</span><span class="Identifier">cd</span><span class="Other">:</span> <a href="libclang_utils.html#CDecl"><span class="Identifier">CDecl</span></a><span class="Other">;</span> <span class="Identifier">conf</span><span class="Other">:</span> <a href="libclang_utils.html#WrapConfig"><span class="Identifier">WrapConfig</span></a><span class="Other">;</span> <span class="Identifier">parent</span><span class="Other">:</span> <span class="Identifier">NType</span><span class="Other">[</span><span class="Identifier">PNode</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">PProcDecl</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
     <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">AssertionError</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+
+
+</dd>
+<a id="wrapObject,CDecl,WrapConfig"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#wrapObject%2CCDecl%2CWrapConfig"><span class="Identifier">wrapObject</span></a><span class="Other">(</span><span class="Identifier">cd</span><span class="Other">:</span> <a href="libclang_utils.html#CDecl"><span class="Identifier">CDecl</span></a><span class="Other">;</span> <span class="Identifier">conf</span><span class="Other">:</span> <a href="libclang_utils.html#WrapConfig"><span class="Identifier">WrapConfig</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Keyword">tuple</span><span class="Other">[</span><span class="Identifier">obj</span><span class="Other">:</span> <span class="Identifier">PObject</span><span class="Other">,</span> <span class="Identifier">procs</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">PProcDecl</span><span class="Other">]</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">AssertionError</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 
@@ -651,8 +1025,9 @@ Generate pretty-printed tree representation of cursor.
 <h1><a class="toc-backref" href="#13">Funcs</a></h1>
 <dl class="item">
 <a id="makeVisitorImpl,seq[NimNode],NimNode"></a>
-<dt><pre><span class="Keyword">func</span> <a href="#makeVisitorImpl%2Cseq%5BNimNode%5D%2CNimNode"><span class="Identifier">makeVisitorImpl</span></a><span class="Other">(</span><span class="Identifier">varnames</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">NimNode</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">body</span><span class="Other">:</span> <span class="Identifier">NimNode</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">NimNode</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span>
-    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">func</span> <a href="#makeVisitorImpl%2Cseq%5BNimNode%5D%2CNimNode"><span class="Identifier">makeVisitorImpl</span></a><span class="Other">(</span><span class="Identifier">varnames</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">NimNode</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">body</span><span class="Other">:</span> <span class="Identifier">NimNode</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">NimNode</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">CodeError</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">,</span> <span class="Identifier">IOError</span><span class="Other">,</span> <span class="Identifier">EOFError</span><span class="Other">,</span> <span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ReadIOEffect</span><span class="Other">,</span> <span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 
@@ -673,28 +1048,56 @@ Remove all empty lines from string
 
 </dd>
 <a id="arg,CDecl,int"></a>
-<dt><pre><span class="Keyword">func</span> <a href="#arg%2CCDecl%2Cint"><span class="Identifier">arg</span></a><span class="Other">(</span><span class="Identifier">cd</span><span class="Other">:</span> <span class="Identifier">CDecl</span><span class="Other">;</span> <span class="Identifier">idx</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">CArg</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">func</span> <a href="#arg%2CCDecl%2Cint"><span class="Identifier">arg</span></a><span class="Other">(</span><span class="Identifier">cd</span><span class="Other">:</span> <a href="libclang_utils.html#CDecl"><span class="Identifier">CDecl</span></a><span class="Other">;</span> <span class="Identifier">idx</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span><span class="Other">:</span> <a href="libclang_utils.html#CArg"><span class="Identifier">CArg</span></a> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">AssertionError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 
 
 </dd>
 <a id="member,CDecl,int"></a>
-<dt><pre><span class="Keyword">func</span> <a href="#member%2CCDecl%2Cint"><span class="Identifier">member</span></a><span class="Other">(</span><span class="Identifier">cd</span><span class="Other">:</span> <span class="Identifier">CDecl</span><span class="Other">;</span> <span class="Identifier">idx</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">CDecl</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">func</span> <a href="#member%2CCDecl%2Cint"><span class="Identifier">member</span></a><span class="Other">(</span><span class="Identifier">cd</span><span class="Other">:</span> <a href="libclang_utils.html#CDecl"><span class="Identifier">CDecl</span></a><span class="Other">;</span> <span class="Identifier">idx</span><span class="Other">:</span> <span class="Identifier">int</span><span class="Other">)</span><span class="Other">:</span> <a href="libclang_utils.html#CDecl"><span class="Identifier">CDecl</span></a> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+
+
+</dd>
+<a id="methods,CDecl,set[CXCursorKind]"></a>
+<dt><pre><span class="Keyword">func</span> <a href="#methods%2CCDecl%2Cset%5BCXCursorKind%5D"><span class="Identifier">methods</span></a><span class="Other">(</span><span class="Identifier">cd</span><span class="Other">:</span> <a href="libclang_utils.html#CDecl"><span class="Identifier">CDecl</span></a><span class="Other">;</span> <span class="Identifier">kinds</span><span class="Other">:</span> <span class="Identifier">set</span><span class="Other">[</span><a href="libclang.html#CXCursorKind"><span class="Identifier">CXCursorKind</span></a><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><a href="libclang_utils.html#CDecl"><span class="Identifier">CDecl</span></a><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+
+
+</dd>
+<a id="pubFields,CDecl"></a>
+<dt><pre><span class="Keyword">func</span> <a href="#pubFields%2CCDecl"><span class="Identifier">pubFields</span></a><span class="Other">(</span><span class="Identifier">cd</span><span class="Other">:</span> <a href="libclang_utils.html#CDecl"><span class="Identifier">CDecl</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><a href="libclang_utils.html#CDecl"><span class="Identifier">CDecl</span></a><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">AssertionError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 
 
 </dd>
 <a id="namespaceName,CDecl"></a>
-<dt><pre><span class="Keyword">func</span> <a href="#namespaceName%2CCDecl"><span class="Identifier">namespaceName</span></a><span class="Other">(</span><span class="Identifier">cd</span><span class="Other">:</span> <span class="Identifier">CDecl</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">func</span> <a href="#namespaceName%2CCDecl"><span class="Identifier">namespaceName</span></a><span class="Other">(</span><span class="Identifier">cd</span><span class="Other">:</span> <a href="libclang_utils.html#CDecl"><span class="Identifier">CDecl</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+
+
+</dd>
+<a id="isOperator,CDecl"></a>
+<dt><pre><span class="Keyword">func</span> <a href="#isOperator%2CCDecl"><span class="Identifier">isOperator</span></a><span class="Other">(</span><span class="Identifier">cd</span><span class="Other">:</span> <a href="libclang_utils.html#CDecl"><span class="Identifier">CDecl</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+
+
+</dd>
+<a id="classifyOperator,CDecl"></a>
+<dt><pre><span class="Keyword">func</span> <a href="#classifyOperator%2CCDecl"><span class="Identifier">classifyOperator</span></a><span class="Other">(</span><span class="Identifier">cd</span><span class="Other">:</span> <a href="libclang_utils.html#CDecl"><span class="Identifier">CDecl</span></a><span class="Other">)</span><span class="Other">:</span> <a href="libclang_utils.html#CXOperatorKind"><span class="Identifier">CXOperatorKind</span></a> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">AssertionError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 
 
 </dd>
 <a id="getNimName,CDecl"></a>
-<dt><pre><span class="Keyword">func</span> <a href="#getNimName%2CCDecl"><span class="Identifier">getNimName</span></a><span class="Other">(</span><span class="Identifier">cd</span><span class="Other">:</span> <span class="Identifier">CDecl</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">func</span> <a href="#getNimName%2CCDecl"><span class="Identifier">getNimName</span></a><span class="Other">(</span><span class="Identifier">cd</span><span class="Other">:</span> <a href="libclang_utils.html#CDecl"><span class="Identifier">CDecl</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 
@@ -713,7 +1116,7 @@ Remove all empty lines from string
 
 </dd>
 <a id="items.i,CXCursor"></a>
-<dt><pre><span class="Keyword">iterator</span> <a href="#items.i%2CCXCursor"><span class="Identifier">items</span></a><span class="Other">(</span><span class="Identifier">cursor</span><span class="Other">:</span> <a href="libclang.html#CXCursor"><span class="Identifier">CXCursor</span></a><span class="Other">)</span><span class="Other">:</span> <a href="libclang.html#CXCursor"><span class="Identifier">CXCursor</span></a> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">iterator</span> <a href="#items.i%2CCXCursor"><span class="Identifier">items</span></a><span class="Other">(</span><span class="Identifier">cursor</span><span class="Other">:</span> <a href="libclang.html#CXCursor"><span class="Identifier">CXCursor</span></a><span class="Other">)</span><span class="Other">:</span> <a href="libclang.html#CXCursor"><span class="Identifier">CXCursor</span></a> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 
@@ -751,7 +1154,7 @@ Create <tt class="docutils literal"><span class="pre">{.cdecl.}</span></tt> call
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2020-08-30 06:20:48 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2020-08-31 15:03:57 UTC</small>
       </div>
     </div>
   </div>
